@@ -9,7 +9,7 @@
 #include "filasemaforo.h"
 
 #Task: Simulate a traffic light using a queue.
-#Output: Time of cars that passed in the traffic light and the time the cars been stoped
+#Output: Time of cars that passed in the traffic light and the time the cars spent stopped
 
 void simulacao(fila &f, carro car)
 {
