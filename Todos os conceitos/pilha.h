@@ -6,7 +6,7 @@ struct Tppilha
     char pilha[MAXPILHA];
 };
 
-void inicializa(Tppilha &p)
+void inicializapilha(Tppilha &p)
 {
     p.topo = -1;
 }
@@ -18,13 +18,7 @@ void PUSH(Tppilha &p, char elem)
 
 char POP(Tppilha &p)
 {
-    char remove = p.pilha[p.topo];
-    for(int i = 0; i<p.topo;i++)
-    {
-        p.pilha[i] = p.pilha[i+1];
-    }
-    p.topo--;
-    return remove;
+    return p.pilha[p.topo--];
 }
 
 char pilhavazia(int topo)
