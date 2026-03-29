@@ -1,94 +1,68 @@
-#define MAXFILA 100
+#define MAXFILA 1000
 
-struct tarefa {
-    char tipo;     
-    int prioridade;         
-    int tempo_total;       
-    int tempo_restante;    
-    int tempo_chegada;     
-    int tempo_inicio;      
+struct TpTarefa{
+    char tipo;			 // 1º)grav. interna, 2º)grav. externa, 3º)leitura, 4º)impressao;
+	int prioridade; 
+    int tempo_total;  	 // tempo necessario -> (ut)
+    int tempo_restante;   // tempo restante
+    int tempo_chegada;    // quando entrou na fila
 };
 
-struct fila {
-    int fim;                        
-    tarefa f[MAXFILA];      
+struct TpFila{
+    int FIM;
+    TpTarefa FILA[MAXFILA];
 };
 
-
-struct processador {
-    int ocupado;                   
-    struct tarefa atual;           
-    int tarefas_executadas;        
+struct TpProcessador{
+    TpTarefa TarefaAtual;
+    int ocupado;
+    int tarefas_executadas;
 };
 
-void inicializa(fila &f);
-char filavazia(int fim);
-char filacheia(int fim);
-void inserir(fila &f, tarefa elem);
-tarefa remover(fila &f);
-tarefa elementoinicio(fila f);
-tarefa elementofim(fila f);
-void exibir(fila f);
-
-void inicializa(fila &f)
-{
-    f.fim = -1;
+void Inserir(TpFila &f, TpTarefa t){
+	f.FILA[++f.FIM] = t;
+	int i = f.FIM;
+	while(i > 0 && f.FILA[i].prioridade < f.FILA[i-1].prioridade){
+		TpTarefa aux = f.FILA[i];
+		f.FILA[i] = f.FILA[i-1];
+		f.FILA[i-1] = aux;
+		i--;
+	}
 }
 
-char filavazia(int fim)
-{
-    return fim == -1;
-}
-char filacheia(int fim)
-{
-    return fim == MAXFILA-1;
+void inicializa(TpFila &f){
+	f.FIM = -1;
 }
 
-void inserir(fila &f, tarefa tar)
+char filavazia(int fim){
+	return fim == -1;
+}
+
+char filacheia(int fim){
+	return fim == MAXFILA -1;
+}
+
+TpTarefa Retirar(TpFila &f){
+	TpTarefa retirado = f.FILA[0];
+	for(int i = 0; i < f.FIM; i++)
+		f.FILA[i] = f.FILA[i+1];
+	f.FIM --;
+	return retirado;
+}
+
+TpTarefa ElementoInicio(TpFila f){
+	return f.FILA[0];
+}
+
+TpTarefa ElementoFim(TpFila f){
+	return f.FILA[f.FIM];
+}
+
+void exibe(TpFila f)
 {
-    int i, achou=0;
-    tarefa aux;
-    f.f[++f.fim] = tar;
-    for(i = f.fim; i>0 && !achou; i--)
+    TpTarefa aux;
+    while(!filavazia(f.FIM))
     {
-        if(f.f[i].prioridade < f.f[i-1].prioridade) //1 - Alta 2 - Media 3 - Baixa
-        {
-            aux = f.f[i];
-            f.f[i] = f.f[i-1];
-            f.f[i-1] = aux;
-        }
-            
-        else
-            achou = 1;
-    }
-}
-
-tarefa remover(fila &f)
-{
-    tarefa aux;
-    aux = f.f[0];
-    for(int i=0; i < f.fim; i++)
-        f.f[i] = f.f[i+1];
-    f.fim--;
-    return aux;
-}
-
-tarefa elementoinicio(fila f)
-{
-    return f.f[0];
-}
-
-tarefa elementofim(fila f)
-{
-    return f.f[f.fim];
-}
-
-void exibir(fila f)
-{
-    tarefa aux;
-    while(!filavazia(f.fim))
-    {
-        aux = remover(f);
-        printf("Info: %d, Prioridade: %d\n", aux.tipo, aux.prioridade);
-    }
+        aux = Retirar(f);
+        printf("%c | pri: %d | tempo: %d\n", aux.tipo, aux.prioridade, aux.tempo_total);    }     
 }

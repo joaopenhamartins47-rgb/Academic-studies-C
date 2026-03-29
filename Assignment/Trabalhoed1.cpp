@@ -46,46 +46,71 @@ void geraraleatorio(void)
         switch (op)
         {
         case 1:
-            fprintf(Ptrarq, "G\n");
+            fprintf(Ptrarq, "G,1,5\n");
             break;
         case 2:
-            fprintf(Ptrarq, "E\n");
+            fprintf(Ptrarq, "E,2,8\n");
             break;
         case 3:
-            fprintf(Ptrarq, "L\n");
+            fprintf(Ptrarq, "L,3,4\n");
             break;
         case 4:
-            fprintf(Ptrarq, "I\n");
+            fprintf(Ptrarq, "I,4,3\n");
             break;
         }
     }
     fclose(Ptrarq);
 }
 
-void simulacao(fila &f, tarefa &taref)
+void inicializaproc(TpProcessador core[], int n)
 {
-    int n, tempo=0, intervalo=4, valid = 0;
+    for(int i = 0; i < n; i++) 
+    {
+        core[i].ocupado = 0;
+        core[i].tarefas_executadas = 0;
+    }
+}
+
+
+int escolher_fila(TpFila f[], int n) //Pega o indice da fila que tem a menor quantidade de registros
+{
+    int menor=0;
+
+    for(int i=1; i<n; i++)
+    {
+        if(f[i].FIM < f[menor].FIM)
+            menor = i;       
+    }
+    return menor;
+}
+
+void inicializafila(TpFila f[], int n)
+{
+    for(int i=0; i<n; i++)
+        inicializa(f[i]);
+}
+
+void simulacao(TpTarefa &taref)
+{
+    int n, tempo=0, intervalo=4, valid = 0, i, indice;
     FILE *Ptrarq = fopen("tarefas.txt", "r");
     printf("Digite a quantidade de processadores \n");
     scanf("%d", &n);
-    processador core[n];
+    TpProcessador core[n];
+    TpFila f[n];
+    inicializafila(f, n);
     
     if(Ptrarq == NULL)
         printf("Erro ao abrir arquivo! \n");
     else
     {
-        inicializa(f);
-        for(int i = 0; i < n; i++) //Inicializa todos os processadores
-        {
-            core[i].ocupado = 0;
-            core[i].tarefas_executadas = 0;
-        }
+        inicializaproc(core, n);
         while(!(feof(Ptrarq) &&  !valid))
         {
             if(tempo % intervalo == 0 && tempo != 0 && !feof(Ptrarq))
             {
-                fscanf(Ptrarq, " %c", &taref.tipo);
-                switch (taref.tipo)
+                fscanf(Ptrarq, " %c,%d,%d", &taref.tipo, &taref.prioridade, &taref.tempo_total);
+                /*switch (taref.tipo)
                 {
                 case 'G':
                     taref.prioridade = 1;
@@ -103,33 +128,28 @@ void simulacao(fila &f, tarefa &taref)
                     taref.prioridade = 4;
                     taref.tempo_total = 3;
                     break;   
-                }
-
-            
-                if(!filacheia(f.fim))
-                {
-                    taref.tempo_chegada = tempo;
-                    taref.tempo_restante = taref.tempo_total;
-                    inserir(f, taref);
-                }
-                else
-                    printf("Fila cheia! \n");
-
+                } 
+                */
+                indice = escolher_fila(f, n);
+                taref.tempo_restante = taref.tempo_total;
+                taref.tempo_chegada = tempo;
+                Inserir(f[indice], taref);
+                printf("Inserido na fila %d\n", indice);
             }
             valid = 0;
-            for(int i=0; i<n; i++) //Atualizacao dos processadores
+            for(i=0; i<n; i++) //Atualizacao dos processadores
             {
-                if(!core[i].ocupado && !filavazia(f.fim))
+                if(!core[i].ocupado && !filavazia(f[i].FIM))
                 {
-                    core[i].atual = remover(f);
+                    core[i].TarefaAtual = Retirar(f[i]);
                     core[i].ocupado = 1;
                     printf("Processador %d recebeu a tarefa\n", i);
                 }
                 if(core[i].ocupado)
                 { 
-                    core[i].atual.tempo_restante--;
+                    core[i].TarefaAtual.tempo_restante--;
                     valid = 1;
-                    if(core[i].atual.tempo_restante == 0)
+                    if(core[i].TarefaAtual.tempo_restante == 0)
                     {
                         core[i].ocupado = 0;
                         core[i].tarefas_executadas++;
@@ -138,26 +158,30 @@ void simulacao(fila &f, tarefa &taref)
                     
                 }
             }
-            if(tempo % 20 == 0)
-                intervalo = 1;
-            if(tempo % 50 == 0)
-                intervalo = 5;
+            if(kbhit())
+            {
+                int num = getch();
+                if(num >= 48 && num <= 57)
+                    intervalo = num - '0'; //Como ele pega tabela ASCII, subtrai o char do numero digitado (48 - 57) pela tabela ascii do zero (48) resultando no numero digitado
+            }
+            
             printf("%d\n", tempo);
-            Sleep(10); 
+            Sleep(1000); 
             tempo++;
         }   
     }
+    fclose(Ptrarq);
 }
+
  
 
-int main(void)
-{
-    fila f;
-    tarefa taref;
+int main(void){
+    TpFila f;
+    TpTarefa taref;
     srand(time(NULL));
     geraraleatorio();
     printf("Arquivo gerado! \n");
-    simulacao(f, taref);
+    simulacao(taref);
 
 
     return 0;
