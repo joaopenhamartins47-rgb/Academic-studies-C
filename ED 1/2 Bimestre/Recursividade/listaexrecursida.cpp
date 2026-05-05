@@ -177,6 +177,14 @@ int binario_dec(char bi[], int tam, int i)
             return binario_dec(bi, tam, i+1);
 }
 
+int MDC(int a, int b)
+{
+    if(b == 0)
+        return a;
+    else
+        return MDC(b, (a%b));
+}
+
 
 int main(void)
 {
