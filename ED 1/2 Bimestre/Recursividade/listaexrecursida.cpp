@@ -164,6 +164,19 @@ int resto(int num, int div)
         return resto(num-div, div);
 }
 
+#include <math.h>
+
+int binario_dec(char bi[], int tam, int i)
+{
+    if(i == tam)
+        return 0;
+    else
+        if(bi[i] == '1')
+            return pow(2, tam-1-i) + binario_dec(bi, tam, i+1);
+        else
+            return binario_dec(bi, tam, i+1);
+}
+
 
 int main(void)
 {
