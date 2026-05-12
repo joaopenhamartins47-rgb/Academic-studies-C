@@ -144,7 +144,10 @@ Tpno *consulta(Tpno *L, char elemento)
 {
     Tpno *aux = NULL;
     if(L == NULL)
+    {
         printf("Elemento nao encontrado, lista vazia!\n");
+        return NULL;
+    }
     else
     {
         aux = L;
