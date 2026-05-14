@@ -9,7 +9,7 @@ struct Tppilham
 void inicializa(Tppilham &p)
 {
     p.topo1 = -1;
-    p.topo2 = MAXPILHAM -1;
+    p.topo2 = MAXPILHAM;
 }
 
 void PUSH(Tppilham &p, char elem, int np)
