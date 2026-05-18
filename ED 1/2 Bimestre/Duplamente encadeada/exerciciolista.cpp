@@ -179,6 +179,105 @@ e. Ordenar (sort) uma lista em ordem crescente/decrescente.
 */
 
 //4 a.
+void fetch(Tpno *L, char elem[])
+{
+    if (L == NULL)
+        printf("Nao há elementos na lista \n");
+    else
+    {
+        while(L != NULL && strcmp(elem, L->info) != 0)
+            L = L->prox;
+        
+        if(L != NULL)
+            printf("Elemento encontrado! - [%s] - \n", L->info);
+        else
+            printf("Elemento nao encontrado! \n");
+    }
+}
+
+//4 b.
+Tpno *merge(Tpno *L1, Tpno *L2)
+{
+    if(L1 == NULL)
+        return L2;
+    if(L2 == NULL)
+        return L1;
+    
+    Tpno *L3 = NULL;
+    Tpno *andador; //Guarda o ultimo elemento de L3
+    while(!(L1 == NULL && L2 == NULL))
+    {
+        if(L1 != NULL && L2 != NULL)
+        {
+            if(L3 == NULL) //Primeira insercao, altera L3
+                if(strcmp(L1->info, L2->info) < 0)
+                {
+                    L3 = L1;
+                    L3->ant = NULL;
+                    andador = L3;
+                    L1 = L1->prox;
+                }
+                else
+                {
+                    L3 = L2;
+                    L3->ant = NULL;
+                    andador = L3;
+                    L2 = L2->prox;
+                }
+            else if(strcmp(L1->info, L2->info) < 0)
+            {
+                Tpno *aux = L1->prox;
+
+                andador->prox = L1;
+                L1->ant = andador;
+
+                L1->prox = NULL;
+
+                andador = L1;
+                L1 = aux;
+            }
+            else
+            {
+                Tpno *aux = L2->prox;
+
+                andador->prox = L2;
+                L2->ant = andador;
+
+                L2->prox = NULL;
+
+                andador = L2;
+                L2 = aux;
+            }
+        }
+        else if(L1 == NULL && L2 != NULL) //Se caso acabou uma das listas
+        {
+            Tpno *aux = L2->prox;
+
+            andador->prox = L2;
+            L2->ant = andador;
+
+            L2->prox = NULL;
+
+            andador = L2;
+            L2 = aux;
+        }
+        else
+        {
+            Tpno *aux = L1->prox;
+
+            andador->prox = L1;
+            L1->ant = andador;
+
+            L1->prox = NULL;
+
+            andador = L1;
+            L1 = aux;
+        }
+    }
+    return L3;
+}
+
+
 
 
 
