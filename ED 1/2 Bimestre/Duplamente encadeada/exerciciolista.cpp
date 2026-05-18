@@ -7,6 +7,7 @@ char menu(void)
 {
     printf("[A] - Inserir ordenado\n");
     printf("[B] - Exclusao de um determinado elemento\n");
+    printf("[C] - Exibir \n");
     return toupper(getche());
 }
 
@@ -64,7 +65,10 @@ Tpno *Inserir_ordenado(Tpno *L)
                 {
                     novo->prox = andador;
                     novo->ant = andador->ant;
-                    andador->ant->prox = novo;
+                    if(andador->ant != NULL)           // guarda contra andador == L, se repetido
+                        andador->ant->prox = novo;
+                    else
+                        L = novo;                      // novo vira o head
                     andador->ant = novo;
                 }
             }
@@ -128,15 +132,63 @@ Tpno *Excluir_elemento(Tpno *L)
     return L;
 }
 
+//Varredura da lista (crescente)
+void varredura_crescente(Tpno *L)
+{
+    if(L == NULL)
+        printf("Nao ha elementos para exibir! \n");
+    else
+    {
+        //Considering that our dynamic list is already sorted in ascending order
+        while(L != NULL)
+        {
+            printf(" %s -> ", L->info);
+            L = L->prox;
+        }
+        printf("\n");
+    }
+}
+
+//Varredura da lista (decrescente)
+void varredura_decrescente(Tpno *L)
+{
+    if(L == NULL)
+        printf("Nao ha elementos para exibir! \n");
+    else
+    {
+        Tpno *andador = L;
+        while(andador->prox != NULL) //Para no ultimo
+            andador = andador->prox;
+        while(andador != NULL)
+        {
+            printf(" %s -> ", andador->info);
+            andador = andador->ant;
+        }
+        printf("\n");
+    }
+}
+
+/*
+4 - Considere listas implementadas por encadeamento duplo, então pede-se para implementar funções que:
+
+a. Localize/ Pesquise/Encontre (search) elementos;
+b. Intercalar (Merge) duas listas ordenadas com apenas um laço de repetição;
+c. Dividir uma lista em várias (‘k’ listas);
+d. Copiar uma lista;
+e. Ordenar (sort) uma lista em ordem crescente/decrescente.
+*/
+
+//4 a.
+
 
 
 int main(void)
 {
     char op;
-    op = menu();
     Tpno *lista = NULL;
     do
     {
+        op = menu();
         switch (op)
         {
         case 'A':
@@ -144,6 +196,18 @@ int main(void)
             break;
         case 'B':
             lista = Excluir_elemento(lista);
+            break;
+        case 'C':
+            char op2;
+            printf("[1] - Display in ascending order \n");
+            printf("[2] - Display in descending order \n");
+            op2 = getche();
+            if(op2 == '1')
+                varredura_crescente(lista);
+            else
+                varredura_decrescente(lista);
+            break;
+        case 'D':
             break;
         
         default:
