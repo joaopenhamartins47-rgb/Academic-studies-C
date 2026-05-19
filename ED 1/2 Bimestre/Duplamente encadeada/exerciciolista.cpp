@@ -277,6 +277,38 @@ Tpno *merge(Tpno *L1, Tpno *L2)
     return L3;
 }
 
+//4 c. - Dividir em "k" listas
+
+//4 d. Copiar uma lista
+
+Tpno *copiar(Tpno *L)
+{
+    Tpno *L2 = NULL;
+    Tpno *andador = NULL, *novo;
+    while(L != NULL)
+    {
+        novo = new Tpno;
+        strcpy(novo->info, L->info);
+        novo->prox = NULL;
+        novo->ant = andador; //faz o link com o andador
+        if(L2 == NULL)
+            L2 = novo;
+        else
+            andador->prox = novo; //linka com o numero novo
+
+        andador = novo; 
+        L = L->prox;
+    }
+        
+    return L2;
+}
+
+//e. Ordenar (sort) uma lista em ordem crescente/decrescente.
+
+
+
+
+
 
 
 
