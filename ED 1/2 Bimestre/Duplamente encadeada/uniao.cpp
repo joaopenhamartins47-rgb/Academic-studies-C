@@ -136,10 +136,6 @@ Tpno *uniao(Tpno *L1, Tpno *L2)
     return L3;
 }
 
-//Intersecao
-
-
-//Diferenca
 
 int main(void)
 {
