@@ -31,7 +31,7 @@ char vazia(int topo, int np)
 {
     if(np == 1)
         return topo == -1;
-    return topo == MAXPILHAM -1;
+    return topo == MAXPILHAM;
 }
 
 char cheia(int topo1, int topo2)
