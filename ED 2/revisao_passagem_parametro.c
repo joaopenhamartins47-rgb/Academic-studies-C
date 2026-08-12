@@ -30,6 +30,19 @@ void insere_final(caixa **inicio, int info) //Insercao no final
 
         aux->prox = novo;
     }
+}
+
+void insere_inicio(caixa **inicio, int info)
+{
+    caixa *novo = (caixa*)malloc(sizeof(caixa));
+    if(*inicio == NULL)
+        *inicio = novo;
+    else
+    {
+       novo->prox = *inicio;
+       novo->info = info;
+       *inicio = novo;
+    }
     
 }
 
@@ -50,6 +63,7 @@ int main(void)
     caixa *inicio;
     init(&inicio);
     insere_final(&inicio, 10);
+    insere_inicio(&inicio, 5);
     exibir(inicio);
     return 0;
 }
