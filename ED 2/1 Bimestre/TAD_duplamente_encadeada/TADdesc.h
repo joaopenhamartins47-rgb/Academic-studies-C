@@ -25,20 +25,18 @@ char isEmpty(tpno *LD)
 
 void InserirInicio(descritor *desc, int x)
 {
+    tpno *novo = (tpno*)malloc(sizeof(tpno));
+    novo->info = x;
+    novo->ant = novo->prox = NULL;
+
     if(!isEmpty(desc->inicio))
     {
-        tpno *novo = (tpno*)malloc(sizeof(tpno));
-        novo->info = x;
         novo->prox = desc->inicio;
-        novo->ant = NULL;
         desc->inicio->ant = novo;
         desc->inicio = novo;
     }
     else
     {
-        tpno *novo = (tpno*)malloc(sizeof(tpno));
-        novo->info = x;
-        novo->ant = novo->prox = NULL;
         desc->inicio = desc->fim = novo;
     }
 }
