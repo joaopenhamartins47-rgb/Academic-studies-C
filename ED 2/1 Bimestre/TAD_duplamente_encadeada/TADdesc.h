@@ -43,20 +43,17 @@ void InserirInicio(descritor *desc, int x)
 
 void InserirFinal(descritor *desc, int x)
 {
+    tpno *novo = (tpno*)malloc(sizeof(tpno));
+    novo->info = x;
+    novo->ant = novo->prox = NULL;
     if(!isEmpty(desc->inicio))
     {
-        tpno *novo = (tpno*)malloc(sizeof(tpno));
-        novo->info = x;
-        novo->prox = NULL;
         novo->ant = desc->fim;
         desc->fim->prox = novo;
         desc->fim = novo;
     }
     else
     {
-        tpno *novo = (tpno*)malloc(sizeof(tpno));
-        novo->info = x;
-        novo->ant = novo->prox = NULL;
         desc->inicio = desc->fim = novo;
     }
 }
