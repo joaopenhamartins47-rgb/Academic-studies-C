@@ -15,6 +15,35 @@ struct Conteudo
 };typedef struct Conteudo content;
 
 
+struct autor_info
+{
+    char sobrenome[50], nome[50];
+    struct autor_info *prox;
+};
+
+struct autor_dinamico
+{
+    struct autor_dinamico *prox;  
+    struct autor_info *pAutor; 
+};typedef struct autor_dinamico autor;
+
+struct livros_dinamico
+{
+    char titulo[200];
+    int paginas, ano;
+    struct livros_dinamico *ant, *prox;
+    struct autor *pListaAutor;
+
+};typedef struct livros_dinamico livros;
+
+struct editora_dinamico
+{
+    char editora[50];
+    struct editora_dinamico *prox;
+    struct livros *pLivros;
+
+};typedef struct editora_dinamico editora;
+
 void print_arq(void)
 {
     FILE *Ptrarq = fopen("livros.txt", "r");
@@ -66,14 +95,14 @@ void print_arq_bin(void)
         }
         fclose(Ptrarq);
     }
-
 }
+
+
+
 
 
 int main(void)
 {
-    print_arq();
-    record_txt_to_bin();
-    print_arq_bin();
+    
     return 0;
 }
