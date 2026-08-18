@@ -161,7 +161,8 @@ autor_info *criar_autor(char nome[], char sobrenome[])
 
 
 
-void dynamic_multiple_lists(editora **cont_ed, livros **cont_li, autor **cont_pon, autor_info **cont_autor)
+
+void dynamic_multiple_lists(editora **cont_ed, autor_info **cont_autor)
 {
     FILE *Ptrarq = fopen("livros.dat", "rb");
     if(!Ptrarq)
@@ -169,9 +170,8 @@ void dynamic_multiple_lists(editora **cont_ed, livros **cont_li, autor **cont_po
     else
     {
         content cont_bin;
-        editora *aux_ed = *cont_ed;
-        livros *aux_li = *cont_li;
-        autor *aux_au = *cont_pon;
+        editora *aux_ed;
+        autor_info *aux_info;
         while(!feof(Ptrarq))
         {
             fread(&cont_bin, sizeof(content), 1, Ptrarq);
@@ -192,17 +192,76 @@ void dynamic_multiple_lists(editora **cont_ed, livros **cont_li, autor **cont_po
                 }
                 aux_ed = novo;
             }
-            aux_li = criar_livros(cont_bin.paginas, cont_bin.titulo_livro, cont_bin.ano);
+            livros *novo_li = criar_livros(cont_bin.paginas, cont_bin.titulo_livro, cont_bin.ano);
             if(!aux_ed->pLivros)
-                aux_ed->pLivros = aux_li;
+                aux_ed->pLivros = novo_li;
             else
             {
-                livros *and_li = aux_ed->pLivros;
-                while(and_li->prox != NULL)
-                    and_li = and_li->prox;      
                 
-                and_li->prox = aux_li;
-                aux_li->ant = and_li;
+                livros *aux_li = aux_ed->pLivros;
+                while(aux_li->prox != NULL)
+                aux_li = aux_li->prox;      
+            
+                aux_li->prox = novo_li;
+                novo_li->ant = aux_li;
+                 
+            }
+            char sobrenome[35], nome[35];
+            int j, k, i=0;
+            while(cont_bin.autores[i] != '\0')
+            {
+                j=0;
+                k=0;
+                if(cont_bin.autores[i] == ' ')
+                    i++;
+                while(cont_bin.autores[i] != ',')
+                {
+                    sobrenome[j] = cont_bin.autores[i];
+                    j++;
+                    i++;
+                }
+                i++; //Pra pular a , e nao deixar copiar pro nome
+                if(cont_bin.autores[i] == ' ')
+                    i++;
+                while(cont_bin.autores[i] != ';' && cont_bin.autores[i] != '\0')
+                {
+                    nome[k] = cont_bin.autores[i];
+                    k++;
+                    i++;
+                }
+                sobrenome[j] = '\0';
+                nome[k] = '\0';
+                aux_info = Busca_autor(*cont_autor, nome, sobrenome);
+                if(!aux_info) //Se nao tem, cria e insere na lista
+                {
+                    autor_info *novo_info = criar_autor(nome, sobrenome);
+                    if(!*cont_autor)
+                        *cont_autor = novo_info;
+                    else
+                    {
+                        autor_info *and_info=*cont_autor;
+                        while(and_info->prox != NULL)
+                            and_info = and_info->prox;
+                        and_info->prox = novo_info;
+                    }
+                    aux_info = novo_info;
+                }
+                //Agora cria o pautor para apontar para o autor com as informacoes
+                autor *novo_au = criar_ponteiro_autor();
+                
+                autor *lista_au = novo_li->pListaAutor;
+                if(!novo_li->pListaAutor)
+                    novo_li->pListaAutor = novo_au;
+                else
+                {
+                    autor *and_au = lista_au;
+                    while(and_au->prox != NULL)
+                        and_au = and_au->prox;
+                    and_au->prox = novo_au;
+                }
+                novo_au->pAutor = aux_info;  
+                if(cont_bin.autores[i] == ';')
+                    i++;       
             }
         }
     }
