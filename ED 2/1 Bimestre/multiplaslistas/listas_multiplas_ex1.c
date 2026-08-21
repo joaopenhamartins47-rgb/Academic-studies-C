@@ -267,6 +267,93 @@ void dynamic_multiple_lists(editora **cont_ed, autor_info **cont_autor)
     }
 }
 
+//3 - Exclusao de um livro do arq binario e da lista dinamica
+
+void Exclusao_livro(char titulo[], editora **inicio)
+{
+    FILE *Ptrarq = fopen("livros.dat", "rb");
+    if(!Ptrarq)
+        printf("Erro ao abrir arquivo!\n");
+    else
+    {
+        content conteudo;
+        fread(&conteudo, sizeof(content), 1, Ptrarq);
+        while(!feof(Ptrarq) && strcmp(titulo, conteudo.titulo_livro) != 0)
+            fread(&conteudo, sizeof(content), 1, Ptrarq);
+
+        if(!feof(Ptrarq)) //Significa que achou
+        {
+            //Exclusao do arq binario primeiro
+            FILE *Temp = fopen("temp.dat", "wb");
+            fseek(Ptrarq, 0, 0);
+            fread(&conteudo, sizeof(content), 1, Ptrarq);
+            while(!feof(Ptrarq))
+            {
+                if(strcmp(titulo, conteudo.titulo_livro) != 0)
+                    fwrite(&conteudo, sizeof(content), 1, Temp);
+                fread(&conteudo, sizeof(content), 1, Ptrarq);
+            }
+            fclose(Ptrarq);
+            fclose(Temp);
+            remove("livros.dat");
+            rename("temp.dat", "livros.dat");
+            
+
+            //Agora, exclusao da lista dinamica
+
+            //Percorre as editoras
+            editora *aux = *inicio;
+            livros *procura = NULL;
+            int parada = 0;
+            while(aux != NULL && !parada)
+            {
+                procura = aux->pLivros;
+                while(procura != NULL && strcmp(procura->titulo, titulo) != 0)
+                    procura = procura->prox;
+                if(procura != NULL)
+                    parada = 1;
+                else
+                    aux = aux->prox;
+            }
+                
+
+            if(!aux)
+                printf("Livro nao encontrado na lista dinamica! \n");
+            else
+            {
+
+                //Exclui de dentro pra fora, entao primeiro é o pAutor
+                autor *aux_au = procura->pListaAutor;
+                while(aux_au != NULL)
+                {
+                    autor *remover = aux_au;
+                    aux_au = aux_au->prox;
+                    free(remover);
+                }
+                //Agora remove o livro
+                if(!procura->ant) //Se ele for o primeiro
+                {
+                    aux->pLivros = procura->prox;
+                    if(procura->prox != NULL)
+                        procura->prox->ant = NULL;
+                }
+                    
+                
+                else{ //Entre 2
+                    procura->ant->prox = procura->prox;
+                    if(procura->prox != NULL)
+                        procura->prox->ant = procura->ant;
+                }
+                free(procura);
+               
+            }   
+        }
+        else
+            printf("Titulo do livro nao encontrado! \n");
+    }
+
+}
+
 
 
 
