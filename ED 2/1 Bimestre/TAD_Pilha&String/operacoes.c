@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "tadpilha.h"
+#include "tadstring.h"
 
 int main(void)
 {
