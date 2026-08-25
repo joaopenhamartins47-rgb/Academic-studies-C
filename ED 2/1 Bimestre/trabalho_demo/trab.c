@@ -38,20 +38,33 @@ char isALTER(char comando[])
     return !strcmp(comando, "ALTER") || !strcmp(comando, "alter");
 }
 
+int pula_from_where(char entrada[], int i)
+{
+    while(entrada[i] != ' ' && entrada[i] != '\0')
+        i++;
+    return i;
+}
+
+int pula_espacos(char entrada[], int i)
+{
+    while(entrada[i] == ' ' && entrada[i] != '\0')
+        i++;
+    return i;
+}
+
 void parser_select(char entrada[], int i, char colunas[10][20], int *num_colunas, char tabela[], char condicao[50])
 {
-    int col = 0;   /* 0=colunas 1=pula FROM 2=tabela 3=verifica WHERE 4=le condicao 5=fim */
+    int col = 0;   // 0=colunas 1=pula FROM 2=tabela 3=verifica WHERE 4=le condicao 5=fim 
     int nc = 0;
     int j = 0;
 
-    condicao[0] = '\0';   /* garante vazio se nao tiver WHERE */
+    condicao[0] = '\0';   // garante vazio se nao tiver WHERE 
 
     while(entrada[i] != '\0')
     {
         if(col == 0)
         {
-            while(entrada[i] == ' ')
-                i++;
+            i = pula_espacos(entrada, i);
             while(entrada[i] != ' ' && entrada[i] != ',' && entrada[i] != '\0')
             {
                 colunas[nc][j] = entrada[i];
@@ -64,9 +77,8 @@ void parser_select(char entrada[], int i, char colunas[10][20], int *num_colunas
             {
                 nc++;
                 j = 0;
-                i++;
-                while(entrada[i] == ' ')
-                    i++;
+                i++; //Pula a virgula
+                i = pula_espacos(entrada, i);
             }
             else if(entrada[i] == ' ')
             {
@@ -77,12 +89,9 @@ void parser_select(char entrada[], int i, char colunas[10][20], int *num_colunas
         }
         else if(col == 1)
         {
-            while(entrada[i] == ' ')
-                i++;
-            while(entrada[i] != ' ' && entrada[i] != '\0') // pula a palavra FROM 
-                i++;   
-            while(entrada[i] == ' ')
-                i++;
+            i = pula_espacos(entrada, i);
+            i = pula_from_where(entrada, i);   
+            i = pula_espacos(entrada, i);
             col = 2;
             j = 0;
         }
@@ -99,15 +108,12 @@ void parser_select(char entrada[], int i, char colunas[10][20], int *num_colunas
         }
         else if(col == 3)
         {
-            while(entrada[i] == ' ')
-                i++;
+            i = pula_espacos(entrada, i);
 
             if(entrada[i] == 'W' || entrada[i] == 'w')
             {
-                while(entrada[i] != ' ' && entrada[i] != '\0') // pula a palavra WHERE 
-                    i++;   
-                while(entrada[i] == ' ')
-                    i++;
+                i = pula_from_where(entrada, i); 
+                i = pula_espacos(entrada, i);
                 j = 0;
                 col = 4;
             }
@@ -119,11 +125,8 @@ void parser_select(char entrada[], int i, char colunas[10][20], int *num_colunas
         else if(col == 4)
         {
             while(entrada[i] != ';' && entrada[i] != '\0')
-            {
-                condicao[j] = entrada[i];
-                j++;
-                i++;
-            }
+                condicao[j++] = entrada[i++];
+            
             condicao[j] = '\0';
             col = 5;
         }
@@ -138,21 +141,72 @@ void parser_select(char entrada[], int i, char colunas[10][20], int *num_colunas
 
 
 
+void parser_delete(char entrada[], int i, char tabela[], char condicao[])
+{
+    int j = 0, col=0;
+    while(entrada[i] != '\0')
+    {
+        if(col == 0){
+            i = pula_espacos(entrada, i);
+            i = pula_from_where(entrada, i);
+
+            i = pula_espacos(entrada, i);
+
+            while(entrada[i] != ' ' && entrada[i] != '\0')
+                tabela[j++] = entrada[i++];
+            
+            tabela[j] = '\0';
+            col=1;
+        }
+        else if(col == 1)
+        {
+            i = pula_espacos(entrada, i);
+
+            i = pula_from_where(entrada, i);
+
+            i = pula_espacos(entrada, i);
+            //Le a condicao
+            j=0;
+            while(entrada[i] != ';' && entrada[i] != '\0')
+                condicao[j++] = entrada[i++];
+            condicao[j] = '\0';
+            col = 3;
+        }
+        else
+            i++;
+    }
+}
+
+
+
 
 int main(void)
 {
-    int i, num_colunas, k;
-    char comando[30], colunas[10][20], tabela[20], condicao[30];
-    i = parser_comando("UPDATE INTO * FROM MOVIES", comando);
-    parser_select("SELECT col1,col2 FROM tabela WHERE id=3", i, colunas, &num_colunas, tabela, condicao);
-    
+    int i;
+    char comando[30];
+    char tabela[20];
+    char condicao[50];
+    char entrada[100];
+
+    strcpy(entrada, "DELETE FROM cliente WHERE id_cliente = 1;");
+
+    i = parser_comando(entrada, comando);
     printf("Comando: %s\n", comando);
 
-    printf("Colunas (%d):\n", num_colunas);
-    for(k = 0; k < num_colunas; k++)
-        printf("  [%d] %s\n", k, colunas[k]);
-
+    parser_delete(entrada, i, tabela, condicao);
     printf("Tabela: %s\n", tabela);
     printf("Condicao: %s\n", condicao);
+
+    printf("\n---\n\n");
+
+    strcpy(entrada, "DELETE FROM aluguel WHERE valor_pago = 0.00;");
+
+    i = parser_comando(entrada, comando);
+    printf("Comando: %s\n", comando);
+
+    parser_delete(entrada, i, tabela, condicao);
+    printf("Tabela: %s\n", tabela);
+    printf("Condicao: %s\n", condicao);
+
     return 0;
 }
