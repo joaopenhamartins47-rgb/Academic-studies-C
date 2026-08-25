@@ -178,6 +178,90 @@ void parser_delete(char entrada[], int i, char tabela[], char condicao[])
 }
 
 
+void parser_update(char entrada[], int i, char tabela[], char colunas[10][20], char valores[10][20], int *num_atribuicoes, char condicao[50])
+{
+    int j = 0, na = 0, col = 0;
+
+    condicao[0] = '\0';
+
+    while(entrada[i] != '\0')
+    {
+        if(col == 0)
+        {
+            i = pula_espacos(entrada, i);
+            while(entrada[i] != ' ' && entrada[i] != '\0')
+                tabela[j++] = entrada[i++];
+            tabela[j] = '\0';
+
+            i = pula_espacos(entrada, i);
+            i = pula_from_where(entrada, i); /* pula o SET */
+            i = pula_espacos(entrada, i);
+
+            j = 0;
+            col = 1;
+        }
+        else if(col == 1)
+        {
+            while(entrada[i] != ' ' && entrada[i] != '=' && entrada[i] != '\0')
+                colunas[na][j++] = entrada[i++];
+            colunas[na][j] = '\0';
+
+            i = pula_espacos(entrada, i);
+
+            if(entrada[i] == '=')
+                i++;
+
+            i = pula_espacos(entrada, i);
+
+            j = 0;
+            while(entrada[i] != ' ' && entrada[i] != ',' && entrada[i] != '\0')
+                valores[na][j++] = entrada[i++];
+            valores[na][j] = '\0';
+
+            na++;
+
+            if(entrada[i] == ',')
+            {
+                i++;
+                i = pula_espacos(entrada, i);
+                j = 0;
+            }
+            else
+                col = 2;
+            
+        }
+        else if(col == 2)
+        {
+            i = pula_espacos(entrada, i);
+
+            if(entrada[i] == 'W' || entrada[i] == 'w')
+            {
+                i = pula_from_where(entrada, i);
+                i = pula_espacos(entrada, i);
+                j = 0;
+                col = 3;
+            }
+            else
+            {
+                col = 4;
+            }
+        }
+        else if(col == 3)
+        {
+            while(entrada[i] != ';' && entrada[i] != '\0')
+                condicao[j++] = entrada[i++];
+            condicao[j] = '\0';
+            col = 4;
+        }
+        else
+        {
+            i++;
+        }
+    }
+
+    *num_atribuicoes = na;
+}
+
 
 
 int main(void)
