@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "TADtrab.h"
 
 int parser_comando(char entrada[], char *comando)
 {
