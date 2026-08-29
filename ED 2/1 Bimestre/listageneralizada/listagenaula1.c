@@ -38,7 +38,49 @@ char nulo(ListaGen *L)
     return L == NULL;
 }
 
-char terminal(ListaGen *L)
+char atomo(ListaGen *L)
 {
     return !nulo(L) && L->terminal;
 }
+
+ListaGen *Cons(ListaGen *H, ListaGen *T)
+{
+    if(atomo(T))
+    {
+        printf("Segundo argumento nao pode ser atomo!");
+        return NULL;
+    }
+    else
+    {
+        ListaGen *L = (ListaGen*)malloc(sizeof(ListaGen));
+        L->terminal = 0;
+        L->no.lista.cabeça = H;
+        L->no.lista.cauda = T;
+        return L;
+    }
+}
+
+ListaGen *Head(ListaGen *L)
+{
+    if(atomo(L) || nulo(L))
+    {
+        printf("Argumento deve ser uma lista nao vazia!");
+        return NULL;
+    }
+    else
+    {
+        return L->no.lista.cabeça;
+    }
+}
+
+ListaGen *Tail(ListaGen *L)
+{
+    if(atomo(L) || nulo(L))
+    {
+        printf("Argumento deve ser uma lista nao vazia");
+        return NULL;
+    }
+    else
+        return L->no.lista.cauda;
+}
+
