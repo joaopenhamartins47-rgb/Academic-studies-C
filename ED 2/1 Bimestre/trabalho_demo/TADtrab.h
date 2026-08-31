@@ -56,7 +56,7 @@ void inicializa_ponteiro_banco(pondb **inicio)
 }
 
 
-void criar_banco(pondb **inicio, char nome[])
+void criar_banco(pondb **inicio, char *nome)
 {
     pondb *novo_pon = (pondb*)malloc(sizeof(pondb));
     db *novo = (db*)malloc(sizeof(db));
@@ -71,7 +71,7 @@ char tabelas_vazias(tabela *inicio)
     return inicio == NULL;
 }
 
-tabela *criar_tabela(char nome[])
+tabela *criar_tabela(char *nome)
 {
     tabela *novo = (tabela*)malloc(sizeof(tabela));
     novo->ant = NULL;
@@ -81,7 +81,7 @@ tabela *criar_tabela(char nome[])
     return novo;
 }
 
-campos *criar_campo(char nome[], char tipo, char pk)
+campos *criar_campo(char *nome, char tipo, char pk)
 {
     campos *novo = (campos*)malloc(sizeof(campos));
     strcpy(novo->campo, nome);
@@ -109,7 +109,7 @@ void inserir_campo(...);
 void inserir_valor(...);
 */
 
-tabela *inserir_tabela(tabela **inicio, char nome[])
+tabela *inserir_tabela(tabela **inicio, char *nome)
 {
     tabela *novo = criar_tabela(nome);
     if(tabelas_vazias(*inicio))
@@ -125,7 +125,7 @@ tabela *inserir_tabela(tabela **inicio, char nome[])
     return novo;
 }
 
-campos *inserir_campo(tabela *aux, char nome[], char tipo, char pk)
+campos *inserir_campo(tabela *aux, char *nome, char tipo, char pk)
 {
     campos *novo = criar_campo(nome, tipo, pk);
     if(aux->pcampos == NULL)
@@ -176,7 +176,7 @@ valorc  *inserir_valor_float(campos *inicio, float valor)
     return novo;
 }
 
-valorc  *inserir_valor_data(campos *inicio, char data[])
+valorc  *inserir_valor_data(campos *inicio, char *data)
 {
     valorc *novo = criar_valor();
     strcpy(novo->dado.valorD, data);
@@ -194,7 +194,7 @@ valorc  *inserir_valor_data(campos *inicio, char data[])
     return novo;
 }
 
-valorc  *inserir_valor_texto(campos *inicio, char texto[])
+valorc  *inserir_valor_texto(campos *inicio, char *texto)
 {
     valorc *novo = criar_valor();
     strcpy(novo->dado.valorT, texto);
@@ -233,4 +233,28 @@ valorc  *inserir_valor_char(campos *inicio, char valor)
 /*
 tabela *buscar_tabela(...);
 campos *buscar_campo(...);
+*/
+
+tabela *buscar_tabela(tabela *inicio, char *nome)
+{
+    tabela *aux = inicio;
+    while(aux != NULL && strcmp(aux->nome_tabela, nome) != 0)
+        aux = aux->prox;
+    return aux;
+}
+
+campos *buscar_campo(campos *inicio, char *nome)
+{
+    campos *aux = inicio;
+    while(aux != NULL && strcmp(aux->campo, nome) != 0)
+        aux = aux->prox;
+    return aux;
+}
+
+/*
+Criar uma função para verificar/encontrar o tipo do campo
+*/
+
+/*
+Criar uma função para imprimir o banco, tabelas, campos e dados
 */
