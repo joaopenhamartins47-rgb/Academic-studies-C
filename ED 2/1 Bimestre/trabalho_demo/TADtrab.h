@@ -251,10 +251,10 @@ campos *buscar_campo(campos *inicio, char *nome)
     return aux;
 }
 
-/*
-Criar uma função para verificar/encontrar o tipo do campo
-*/
-
+int tipo_valido(char tipo)
+{
+    return tipo == 'I' || tipo == 'N' || tipo == 'D' || tipo == 'C' || tipo == 'T';
+}
 /*
 Criar uma função para imprimir o banco, tabelas, campos e dados
 */
@@ -301,5 +301,44 @@ void imprimir_banco(pondb *banco)
             printf("-------------------------\n");
             aux = aux->prox;
         }
+    }
+}
+
+
+void imprimir_tabela(tabela *inicio)
+{
+    while(inicio)
+    {
+        printf("Tabela: %s\n", inicio->nome_tabela);
+        inicio = inicio->prox;
+    }
+}
+
+void imprimir_campos(campos *inicio)
+{
+    while(inicio)
+    {
+        printf("Campo: %s \t Tipo: %c \t PK: %c\n", inicio->campo, inicio->tipo, inicio->pk);
+        inicio = inicio->prox;
+    }
+}
+
+void imprimir_valores(campos *inicio)
+{
+    valorc *aux_valor = inicio->Pdados;
+    while(aux_valor)
+    {
+        if(inicio->tipo == 'I')
+            printf("Valor: %d\n", aux_valor->dado.valorI);
+        else if(inicio->tipo == 'D')
+            printf("Valor: %s\n", aux_valor->dado.valorD);
+        else if(inicio->tipo == 'T')
+            printf("Valor: %s\n", aux_valor->dado.valorT);
+        else if(inicio->tipo == 'N')
+            printf("Valor: %.2f\n", aux_valor->dado.valorN);
+        else if(inicio->tipo == 'C')
+            printf("Valor: %c\n", aux_valor->dado.valorC);
+
+        aux_valor = aux_valor->prox;
     }
 }
