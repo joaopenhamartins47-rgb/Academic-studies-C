@@ -258,3 +258,48 @@ Criar uma função para verificar/encontrar o tipo do campo
 /*
 Criar uma função para imprimir o banco, tabelas, campos e dados
 */
+
+void imprimir_banco(pondb *banco)
+{
+    if(!banco)
+        printf("Banco não existente!\n");
+    else
+    {
+        
+        printf("Banco: %s\n", banco->pbanco->nome_banco);
+        tabela *aux = banco->pbanco->ptabelas;
+        while(aux)
+        {
+
+            printf("Tabela: %s \t", aux->nome_tabela);
+            campos *aux_cam = aux->pcampos;
+            printf("Campos da tabela: \n");
+            while(aux_cam)
+            {
+
+                printf("Campo: %s \t Tipo: %c \t PK: %c\t", aux_cam->campo, aux_cam->tipo, aux_cam->pk);
+                printf("\nValores:");
+                valorc *aux_valor = aux_cam->Pdados;
+                while(aux_valor)
+                {
+                    if(aux_cam->tipo == 'I')
+                        printf("Valor: %d\n", aux_valor->dado.valorI);
+                    else if(aux_cam->tipo == 'D')
+                        printf("Valor: %s\n", aux_valor->dado.valorD);
+                    else if(aux_cam->tipo == 'T')
+                        printf("Valor: %s\n", aux_valor->dado.valorT);
+                    else if(aux_cam->tipo == 'N')
+                        printf("Valor: %.2f\n", aux_valor->dado.valorN);
+                    else if(aux_cam->tipo == 'C')
+                        printf("Valor: %c\n", aux_valor->dado.valorC);
+
+                    aux_valor = aux_valor->prox;
+                }
+                printf("\n");
+                aux_cam = aux_cam->prox;
+            }
+            printf("-------------------------\n");
+            aux = aux->prox;
+        }
+    }
+}
