@@ -23,7 +23,7 @@ struct listagen
 
 //Criacao de uma lista gen com informacoes
 
-ListaGen *criar_lista_gen(char info[])
+ListaGen *criat(char info[])
 {
     ListaGen *L = (ListaGen*)malloc(sizeof(ListaGen));
     
@@ -59,6 +59,7 @@ ListaGen *Cons(ListaGen *H, ListaGen *T)
         return L;
     }
 }
+
 
 ListaGen *Head(ListaGen *L)
 {

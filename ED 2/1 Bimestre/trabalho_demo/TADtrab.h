@@ -11,7 +11,7 @@ struct Campos
 
 union valor
 {
-    int valorL;
+    int valorI;
     char valorT[20];
     char valorD[10];
     float valorN;
@@ -108,6 +108,127 @@ void inserir_tabela(...);
 void inserir_campo(...);
 void inserir_valor(...);
 */
+
+tabela *inserir_tabela(tabela **inicio, char nome[])
+{
+    tabela *novo = criar_tabela(nome);
+    if(tabelas_vazias(*inicio))
+        *inicio = novo;
+    
+    else{
+        tabela *aux = *inicio;
+        while(aux->prox != NULL)
+            aux = aux->prox;
+        novo->ant = aux;
+        aux->prox = novo;
+    }
+    return novo;
+}
+
+campos *inserir_campo(tabela *aux, char nome[], char tipo, char pk)
+{
+    campos *novo = criar_campo(nome, tipo, pk);
+    if(aux->pcampos == NULL)
+        aux->pcampos = novo;
+    else
+    {
+        campos *and = aux->pcampos;
+        while(and->prox != NULL)
+            and = and->prox;
+        and->prox = novo;
+    }
+    return novo;
+}
+
+valorc  *inserir_valor_int(campos *inicio, int valor)
+{
+    valorc *novo = criar_valor();
+    novo->dado.valorI = valor;
+    if(inicio->Patual == NULL){
+        inicio->Patual = novo;
+        inicio->Pdados = novo;
+    }
+    else
+    {
+        valorc *aux = inicio->Patual;
+        while(aux->prox != NULL)
+            aux = aux->prox;
+        aux->prox = novo;
+    }
+    return novo;
+}
+
+valorc  *inserir_valor_float(campos *inicio, float valor)
+{
+    valorc *novo = criar_valor();
+    novo->dado.valorN = valor;
+    if(inicio->Patual == NULL){
+        inicio->Patual = novo;
+        inicio->Pdados = novo;
+    }
+    else
+    {
+        valorc *aux = inicio->Patual;
+        while(aux->prox != NULL)
+            aux = aux->prox;
+        aux->prox = novo;
+    }
+    return novo;
+}
+
+valorc  *inserir_valor_data(campos *inicio, char data[])
+{
+    valorc *novo = criar_valor();
+    strcpy(novo->dado.valorD, data);
+    if(inicio->Patual == NULL){
+        inicio->Patual = novo;
+        inicio->Pdados = novo;
+    }
+    else
+    {
+        valorc *aux = inicio->Patual;
+        while(aux->prox != NULL)
+            aux = aux->prox;
+        aux->prox = novo;
+    }
+    return novo;
+}
+
+valorc  *inserir_valor_texto(campos *inicio, char texto[])
+{
+    valorc *novo = criar_valor();
+    strcpy(novo->dado.valorT, texto);
+    if(inicio->Patual == NULL){
+        inicio->Patual = novo;
+        inicio->Pdados = novo;
+    }
+    else
+    {
+        valorc *aux = inicio->Patual;
+        while(aux->prox != NULL)
+            aux = aux->prox;
+        aux->prox = novo;
+    }
+    return novo;
+}
+
+valorc  *inserir_valor_char(campos *inicio, char valor)
+{
+    valorc *novo = criar_valor();
+    novo->dado.valorC = valor;
+    if(inicio->Patual == NULL){
+        inicio->Patual = novo;
+        inicio->Pdados = novo;
+    }
+    else
+    {
+        valorc *aux = inicio->Patual;
+        while(aux->prox != NULL)
+            aux = aux->prox;
+        aux->prox = novo;
+    }
+    return novo;
+}
 
 /*
 tabela *buscar_tabela(...);
