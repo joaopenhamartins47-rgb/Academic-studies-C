@@ -85,3 +85,34 @@ ListaGen *Tail(ListaGen *L)
         return L->no.lista.cauda;
 }
 
+/*
+Usando as operações Cons() e Criat(), escreva expressões para construir as
+seguintes listas:
+a) [a, b, c]
+b) [a, [b, [c]]]
+c) [[[a], b], c]
+d) [[a, b, [c]], d]
+e) [[[[]]]]
+*/
+int main(void)
+{
+    //A
+    ListaGen *la = criat("a");
+    ListaGen *lb = criat("b");
+    ListaGen *lc = criat("c");
+
+    ListaGen *exA = Cons(la, Cons(lb, Cons(lc, NULL)));
+
+    //B
+    ListaGen *exB = Cons(criat("a"), Cons(Cons(criat("b"), Cons(Cons(criat("c"), NULL), NULL)), NULL));
+    
+    //C
+    ListaGen *exC = Cons(Cons(Cons(criat("a"), NULL), Cons(criat("b"), NULL)), Cons(criat("c"), NULL));
+
+    //D
+    ListaGen *exD = Cons(Cons(criat("a"), Cons(criat("b"), Cons(Cons(criat("c"), NULL), NULL))), Cons(criat("d"), NULL));
+
+    //E
+    ListaGen *exE = Cons(Cons(Cons(NULL, NULL), NULL), NULL);
+}
+
