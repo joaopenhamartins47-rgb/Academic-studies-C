@@ -342,3 +342,59 @@ void imprimir_valores(campos *inicio)
         aux_valor = aux_valor->prox;
     }
 }
+
+/*
+Para o delete e update
+buscar_valor(...)
+remover_valor(...)
+alterar_valor(...)
+*/
+
+/*
+Conferir os Parsers dos comandos sql ex: INSERT INTO cliente (id_cliente, nome) VALUES (1, 'Joao');
+
+Se torna:
+buscar_tabela("cliente")
+        ↓
+buscar_campo("id_cliente")
+        ↓
+inserir_valor_int(...)
+
+buscar_campo("nome")
+        ↓
+inserir_valor_texto(...)
+*/
+
+/*
+executar_insert(...) - Funcao pra extrair os dados do parser e realizar a insercao
+*/
+
+/*
+Resumo do que falta:
+SUPORTE
+├── tipo_valido
+├── comparar_valor
+├── alterar_valor
+└── remover_valor
+
+INSERT
+└── executar_insert
+
+UPDATE
+├── avaliar_condicao
+└── executar_update
+
+DELETE
+├── avaliar_condicao
+└── executar_delete
+
+FK
+└── criar_fk
+
+SELECT
+├── executar_select
+├── avaliar_where
+├── avaliar_between
+└── executar_join
+*/
+
