@@ -77,6 +77,38 @@ void exibemisto(ListaGen *L)
     }
 }
 
+// Agora a ideia é percorrer recursivamente pelo head e pela cauda quando desempilhar 
+
+void exibe_recursivo(ListaGen *L)
+{
+    if(!nulo(L))
+    {
+        if(atomo(L))
+            printf("%s\n", L->no.info);
+        else
+        {
+            exibe_recursivo(head(L));
+            exibe_recursivo(tail(L));
+        }
+    }
+}
+
+void destruir_lista(ListaGen **L)
+{
+    if(!nulo(*L))
+    {
+        if(atomo(*L))
+            free(*L);
+        else
+        {
+            destruir_lista(&(*L)->no.lista.cabeça);
+            destruir_lista(&(*L)->no.lista.cauda);
+            free(*L);
+            *L = NULL;
+        }
+    }
+}
+
 
 
 int main(void)
