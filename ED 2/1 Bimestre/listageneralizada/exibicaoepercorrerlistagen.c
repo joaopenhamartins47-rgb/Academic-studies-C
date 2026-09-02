@@ -109,6 +109,71 @@ void destruir_lista(ListaGen **L)
     }
 }
 
+struct fila
+{
+    ListaGen *info;
+    struct fila *prox;
+};typedef struct fila Fila;
+
+void init(Fila **f)
+{
+    *f = NULL;
+}
+
+void enqueue(Fila **f, ListaGen *L)
+{
+    Fila *novo = (Fila*)malloc(sizeof(Fila));
+    novo->info = L;
+    novo->prox = NULL;
+    if(*f == NULL)
+        *f = novo;
+    else
+    {
+        Fila *aux = *f;
+        while(aux->prox != NULL)
+            aux = aux->prox;
+        aux->prox = novo;
+    }
+}
+
+void dequeue(Fila **f, ListaGen **info)
+{
+    if(*f)
+    {
+        Fila *aux = *f;
+        *info = (*f)->info;
+        *f = (*f)->prox;
+        free(aux);
+    }
+    else
+        *info = NULL;
+}
+
+char isEmpty(Fila *f)
+{
+    return f == NULL; 
+}
+int contaLista(ListaGen *L)
+{
+    int cont =0;
+    Fila *f;
+    init(&f);
+    enqueue(&f, L);
+    while(!isEmpty(f))
+    {
+        dequeue(&f, &L);
+        cont++;
+        while(!nulo(L))
+        {
+            if(!nulo(head(L)) && !atomo(head(L)))
+                enqueue(&f, head(L));
+
+            L = tail(L);
+        }
+    }
+    return cont;
+}
+
 
 
 int main(void)
