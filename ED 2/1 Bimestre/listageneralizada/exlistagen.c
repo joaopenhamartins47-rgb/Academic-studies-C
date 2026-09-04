@@ -123,6 +123,41 @@ char comp(Listagen *L, Listagen *L2)
 }
 
 
+/*
+4 - Numa lista generalizada, cada par de colchetes serve para indicar um nível de aninhamento. Por exemplo, na lista [a,[b,[c],d],e], os elementos a, [b,[c],d] e e pertencem ao primeiro nível de aninhamento, os elementos b, [c] e d pertencem ao segundo nível, e o elemento c pertence ao terceiro. Freqüentemente, o primeiro nível de aninhamento é denominado top-level, enquanto o último (aquele mais interno) é chamado botton-level. Com base nisto, podemos definir dois novos conceitos relacionados a uma lista generalizada L:
+*/
+
+// a) codifique a rotina Len(L), que dá o comprimento de uma lista generalizada L. Admita que a lista nula tem comprimento 0 e que a operação não pode ser aplicada a átomos.
+
+void comprimento_lista(Listagen *L, int *cont)
+{
+    if(!nulo(L))
+    {
+        (*cont)++;
+        comprimento_lista(tail(L), &*cont);
+    }
+}
+
+// b) codifique a rotina Deph(L), que dá a profundidade de uma lista generalizada L. Admita que átomos têm profundidade 0 e listas vazias têm profundidade 1.
+
+void profundidade_lista(Listagen *L, int p, int *maior)
+{
+    if(!nulo(L) && !atomo(L))
+    {
+        if(p > *maior)
+            *maior = p;
+        profundidade_lista(head(L), p+1, &*maior);
+        profundidade_lista(tail(L), p, &*maior);
+    }
+}
+
+int calc_profundidade(Listagen *L)
+{
+    int maior = 0;
+    profundidade_lista(L, 1, &maior);
+    return maior;
+}
+
 int main(void)
 {
     return 0;
