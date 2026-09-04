@@ -174,6 +174,27 @@ void concatenar_lista(Listagen **L, Listagen *L2)
     } 
 }
 
+/*
+6:-) Codifique a rotina Replace(O,N,L), que substitui todas as ocorrências do elemento O, em L, por um novo elemento N.
+*/
+
+void Replace(char *o, char *n, Listagen **L)
+{
+    if(!nulo(*L))
+    {
+        if(atomo(*L))
+        {
+            if(strcmp((*L)->no.info, o) == 0)
+                strcpy((*L)->no.info, n);
+        }
+        else
+        {
+            Replace(o, n, &(*L)->no.lista.cabeca);
+            Replace(o, n, &(*L)->no.lista.cauda);
+        }
+    }  
+}
+
 
 int main(void)
 {
