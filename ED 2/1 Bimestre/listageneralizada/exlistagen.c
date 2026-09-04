@@ -195,6 +195,32 @@ void Replace(char *o, char *n, Listagen **L)
     }  
 }
 
+//7:-) Codifique a rotina TopLevel(L), que cria e retorna lista contendo apenas os elementos que se encontram no top-level da lista L.
+
+Listagen *TopLevel(Listagen *L)
+{
+    Listagen *ListaTop = NULL;
+    while(!nulo(L))
+    {
+        if(atomo(head(L)))
+        {
+            if(!ListaTop)
+                ListaTop = Cons(Cons(criat(L->no.info), NULL), NULL);
+            else
+            {
+                Listagen *aux = ListaTop;
+                while(tail(aux) != NULL)
+                    aux = tail(aux);
+
+                //Para um antes
+                aux->no.lista.cauda = Cons(Cons(criat(L->no.info), NULL), NULL);
+            }
+        }
+        L = tail(L);
+    }
+    return ListaTop;
+}
+
 
 int main(void)
 {
