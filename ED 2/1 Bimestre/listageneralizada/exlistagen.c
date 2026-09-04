@@ -221,6 +221,26 @@ Listagen *TopLevel(Listagen *L)
     return ListaTop;
 }
 
+/*
+8:-) Codifique a rotina Nth(L,n), que retorna o n-ésimo elemento existente no top-level de L.
+*/
+
+char Nth(Listagen *L, int n)
+{
+    int cont = 0;
+    while(!nulo(L) && cont <= n)
+    {
+        if(atomo(L))
+        {
+            cont++;
+            if(cont == n)
+                return L->no.info;
+        }
+        L = tail(L);
+    }
+    return 0;
+}
+
 
 int main(void)
 {
