@@ -158,6 +158,23 @@ int calc_profundidade(Listagen *L)
     return maior;
 }
 
+/*
+5:-) Codifique a rotina Append(L, M), que concatena as listas generalizadas L e M. Por exemplo, para L:[a,[b,[c],d],e,[f]] e M:[g,[],[h]], a operação R:=Append(L, M) resultará na lista R:[a,[b,[c],d],e,[f],g,[],[h]].
+*/
+
+void concatenar_lista(Listagen **L, Listagen *L2)
+{
+    if(!nulo(*L))
+    {
+        if(!tail(*L))
+        (*L)->no.lista.cauda = L2;
+    
+        else
+            concatenar_lista(&(*L)->no.lista.cauda, L2);
+    } 
+}
+
+
 int main(void)
 {
     return 0;
