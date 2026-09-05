@@ -83,17 +83,21 @@ void destruir(Listagen **L)
 
 Listagen *head(Listagen *L)
 {
-    if(atomo(L))
+    if(atomo(L)){
         printf("O argumento deve ser uma lista\n");
         return NULL;
+    }
+        
     return L->no.lista.cabeca;
 }
 
 Listagen *tail(Listagen *L)
 {
-    if(atomo(L))
+    if(atomo(L)){
         printf("O argumento deve ser uma lista\n");
         return NULL;
+    }
+        
     return L->no.lista.cauda;
 }
 
@@ -230,17 +234,139 @@ char Nth(Listagen *L, int n)
     int cont = 0;
     while(!nulo(L) && cont <= n)
     {
-        if(atomo(L))
+        if(atomo(head(L)))
         {
             cont++;
             if(cont == n)
-                return L->no.info;
+                return head(L)->no.info;
         }
         L = tail(L);
     }
     return 0;
 }
 
+/*
+9:-) Codifique a rotina Plain(L), que transforma a lista L numa lista de profundidade 1. Por exemplo, sendo a lista L:[a,[b,[c,d]],[],e], Plain(L) transformá-la-ia na lista L:[a,b,c,d,e].
+*/
+
+/*
+Ideias: L vai andar de lado
+
+Preciso percorrer pelos head, se nao for atomo, ele continua andando ate ser, 
+*/
+
+//Da pra fazer recursivo, empilha ate achar o atomo, ai desempilha deletando e quando chegar a primeira chamada coloca o head apontando pro atomo salvo dentro de uma variavel
+
+//Da pra eu usar uma estrutura do tipo fila, enfileirar os atomos percorrendo a lista, depois percorrer dnv para deletar os atomos e estruturas da lista e criar novas caixas de conexao, oq eu devo considerar:
+
+//Deletar apenas quando tiver sublistas, e garantir que os ponteiros nao se percam ao colocar no top level
+
+struct fila
+{
+    char info[8];
+    struct fila *prox;
+};typedef struct fila filap;
+
+void init(filap **f)
+{
+    *f = NULL;
+}
+
+void enqueue(filap **f, char info[])
+{
+    filap *novo = (filap*)malloc(sizeof(filap));
+
+    strcpy(novo->info, info);
+    novo->prox = NULL;
+
+    if(!*f)
+        *f = novo;
+    else
+    {
+        filap *aux = *f;
+
+        while(aux->prox != NULL)
+            aux = aux->prox;
+
+        aux->prox = novo;
+    }
+}
+
+char isEmpty(filap *f)
+{
+    return f == NULL;
+}
+
+void dequeue(filap **f, char *removido)
+{
+    if(!isEmpty(*f))
+    {
+        filap *aux = *f;
+        strcpy(removido, (*f)->info);
+        *f = (*f)->prox;
+        free(aux);
+    }
+    
+}
+
+
+
+void Armazenar_atomos(Listagen *L, filap **f)
+{
+    //Percorrer a lista principal
+    while(L != NULL)
+    {
+        if(atomo(head(L)))
+            enqueue(&*f, head(L)->no.info);
+        else //sublista
+        {
+            Armazenar_atomos(head(L), &*f);
+        }
+        L = tail(L);
+    }
+}
+
+void destruir_lista(Listagen **L)
+{
+    if(!nulo(*L))
+    {
+        if(!atomo(*L))
+        {
+            destruir_lista(&(*L)->no.lista.cabeca);
+            destruir_lista(&(*L)->no.lista.cauda);
+            free(*L);
+        }
+        else
+        {
+            free(*L);
+        }
+        *L = NULL;
+
+        
+    }
+}
+
+void Plain(Listagen **L, filap *f)
+{
+    Armazenar_atomos(*L, &f);
+    destruir_lista(&*L);
+    while(!isEmpty(f))
+    {
+        char info[8];
+        
+        dequeue(&f, info);
+        Listagen *novo = criat(info);
+        if(!*L)
+            *L = cons(cons(novo, NULL), NULL);
+        else
+        {
+            Listagen *aux = *L;
+            while(tail(aux))
+                aux = tail(aux);
+            aux->no.lista.cauda = cons(cons(novo, NULL), NULL);
+        }
+    }
+}
 
 int main(void)
 {
