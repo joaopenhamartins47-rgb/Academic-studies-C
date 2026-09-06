@@ -346,7 +346,7 @@ void destruir_lista(Listagen **L)
     }
 }
 
-void Plain(Listagen **L, filap *f)
+void Plain_3(Listagen **L, filap *f)
 {
     Armazenar_atomos(*L, &f);
     destruir_lista(&*L);
@@ -364,6 +364,45 @@ void Plain(Listagen **L, filap *f)
             while(tail(aux))
                 aux = tail(aux);
             aux->no.lista.cauda = cons(cons(novo, NULL), NULL);
+        }
+    }
+}
+
+// Outra forma de fazer, com uma funcao só
+
+void Plain(Listagen **L)
+{
+    if(!nulo(*L))
+    {
+        if(atomo(head(*L)))
+            Plain(&(*L)->no.lista.cauda);
+        else
+        {
+            Listagen *sub = head(*L);
+            Plain(&sub);
+
+            Listagen *velho = *L;
+
+            if(sub == NULL)
+            {
+                *L = tail(*L);
+                free(velho);
+                Plain(&*L);
+            }
+            else
+            {
+                Listagen *ultimo = sub;
+
+                while(tail(ultimo) != NULL)
+                    ultimo = tail(ultimo);
+
+                ultimo->no.lista.cauda = tail(*L);
+
+                *L = sub;
+                free(velho);
+
+                Plain(&ultimo->no.lista.cauda);
+            }
         }
     }
 }
