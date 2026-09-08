@@ -417,6 +417,79 @@ Listagen *construir_lista_es(Listagen **L)
     *L = cons(cons(criat("a"),cons(cons(criat("b"),NULL),NULL)),cons(cons(cons(criat("c"),cons(criat("d"),NULL)),cons(cons(criat("e"),NULL),NULL)),cons(criat("f"),NULL)));
 }
 
+//Inverter os atomos de uma lista
+
+struct pilhap
+{
+    char info[8];
+    struct pilhap *prox;
+};typedef struct pilhap pilha;
+
+void init_pilha(pilha **p)
+{
+    *p = NULL;
+}
+
+void push(pilha **p, char info[])
+{
+    pilha *novo = (pilha*)malloc(sizeof(pilha));
+    strcpy(novo->info, info);
+    novo->prox = *p;
+    *p = novo;
+}
+
+void pop(pilha **p, char *info)
+{
+    pilha *aux = *p;
+    *p = (*p)->prox;
+    strcpy(info, aux->info);
+    free(aux);
+}
+
+char pvazia(pilha *p)
+{
+    return p == NULL;
+}
+
+//Percorre a lista armazenando os atomos e depois realiza a troca
+void armazenar_atomos(Listagen **L, pilha **p)
+{
+    if(!nulo(*L))
+    {
+        if(atomo(*L))
+        {
+            push(&*p, (*L)->no.info);
+        }
+        else
+        {
+            armazenar_atomos(&(*L)->no.lista.cabeca, &*p);
+            armazenar_atomos(&(*L)->no.lista.cauda, &*p);
+        }
+    }
+}
+
+void inverter_lista(Listagen **L, pilha **p)
+{
+    if(!nulo(*L))
+    {
+        if(atomo(*L))
+        {
+            char info[8];
+            if(!pvazia(*p))
+            {
+                pop(&*p, info);
+                strcpy((*L)->no.info, info);
+            }
+            
+        }
+        else
+        {
+            inverter_lista(&(*L)->no.lista.cabeca, &*p);
+            inverter_lista(&(*L)->no.lista.cauda, &*p);
+        }
+    }
+}
+
 int main(void)
 {
     return 0;
