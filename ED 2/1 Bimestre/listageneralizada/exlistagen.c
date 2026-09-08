@@ -407,6 +407,16 @@ void Plain(Listagen **L)
     }
 }
 
+/*
+Usando somente Cons() e CriaT(), construa:
+
+[[a, [b]], [[c, d], [e]], f]
+*/
+Listagen *construir_lista_es(Listagen **L)
+{
+    *L = cons(cons(criat("a"),cons(cons(criat("b"),NULL),NULL)),cons(cons(cons(criat("c"),cons(criat("d"),NULL)),cons(cons(criat("e"),NULL),NULL)),cons(criat("f"),NULL)));
+}
+
 int main(void)
 {
     return 0;
