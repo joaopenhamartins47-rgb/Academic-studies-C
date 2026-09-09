@@ -119,7 +119,73 @@ void selecao_direta(Listagen *L)
 
 //Agora iremos salvar na fila os inicios de cada lista e sublista
 
+struct filap
+{
+    Listagen *info;
+    struct filap *prox;
+};typedef struct filap fila;
 
+void init(fila **f)
+{
+    *f = NULL;
+}
+
+char vazio(fila *f)
+{
+    return f == NULL;
+}
+
+void enqueue(fila **f, Listagen *info)
+{
+    fila *novo = (fila*)malloc(sizeof(fila));
+    novo->info = info;
+    novo->prox = NULL;
+    if(!*f)
+        *f = novo;
+    else
+    {
+        fila *aux = *f;
+        while(aux->prox != NULL)
+            aux = aux->prox;
+        aux->prox = novo;
+    }
+}
+
+void dequeue(fila **f, Listagen **removido)
+{
+    *removido = (*f)->info;
+
+    Listagen *aux = *f;
+    *f = (*f)->prox;
+    free(aux);
+}
+
+void ordena_listas(Listagen *L)
+{
+    fila *f1, *f2;
+    init(&f1);
+    init(&f2);
+    enqueue(&f1, L);
+    enqueue(&f2, L);
+    while(!vazio(f1))
+    {
+        dequeue(&f1, &L);
+        while(!nulo(L))
+        {
+            if(!nulo(head(L)) && !atomo(head(L))) //Se nao for nulo, nem atomo, so pode ser uma lista
+            {
+                enqueue(&f1, head(L));
+                enqueue(&f2, head(L));
+            }
+            L = tail(L);
+        }
+    }
+    while(!vazio(f2))
+    {
+        dequeue(&f2, &L);
+        selecao_direta(L);
+    }
+}
 
 
 
