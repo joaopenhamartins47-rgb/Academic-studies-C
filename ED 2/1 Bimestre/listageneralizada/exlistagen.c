@@ -490,6 +490,9 @@ void inverter_lista(Listagen **L, pilha **p)
     }
 }
 
+
+
+
 int main(void)
 {
     return 0;
