@@ -187,6 +187,132 @@ void ordena_listas(Listagen *L)
     }
 }
 
+/*
+2:-) Faça um algoritmo para inserir um elemento (átomo) em cada uma das sublistas de
+uma Lista Generalizadas L. A Lista Generalizada possui os átomos em ordem e o
+elemento deve ser inserido obedecendo essa ordem.
+Exemplos de chamada do algoritmo: insere(&L, “b”, 1); //Não insere, pois já tem o “b”!
+insere(&L, “b”, 2);
+
+*/
+
+//Primeiro vou guardar na fila o inicio de cada sublista
+
+//Funcao de procurar se aquele atomo ja existe
+char tem_atomo(Listagen *L, char atomo[])
+{
+    while(L != NULL && strcmp(L->no.lista.cabeca->no.info, atomo) != 0)
+        L = tail(L);
+    if(L == NULL)
+        return 0;
+    return 1;
+}
+
+/*
+Codigo de exemplo insercao direta
+void insercao_direta(int v[], int *n, int x)
+{
+    int i = *n - 1;
+
+    while(i >= 0 && x < v[i])
+    {
+        v[i + 1] = v[i];
+        i--;
+    }
+
+    v[i + 1] = x;
+    (*n)++;
+}
+*/
+void insercao_direta(Listagen **L, char info[])
+{
+    Listagen *p = *L;
+    Listagen *ant = NULL;
+    int achou = 0;
+
+    while(!nulo(p) && !achou)
+    {
+        if(atomo(head(p)))
+        {
+            if(strcmp(info, head(p)->no.info) < 0)
+                achou = 1;
+            else
+            {
+                ant = p;
+                p = tail(p);
+            }
+        }
+        else
+        {
+            ant = p;
+            p = tail(p);
+        }
+    }
+
+    Listagen *novo = cons(criat(info), p);
+
+    if(ant == NULL)
+        *L = novo;
+    else
+        ant->no.lista.cauda = novo;
+}
+
+void insere(Listagen *L, char info[], int pos) //Percorro com o f1 e no f2 coloco todos os inicios da lista daquela profundidade
+{
+    fila *f1, *f2;
+    init(&f1);
+    init(&f2);
+    enqueue(&f1, L);
+    int prof = 1;
+    while(!vazio(f1))
+    {
+        int qtde = 0;
+        fila *aux = f1;
+
+        //Verifica quantas listas tem no nivel dos que ja estao na fila
+        while(aux != NULL)
+        {
+            qtde++;
+            aux = aux->prox;
+        }
+
+        //Processa somente as listas do nivel
+        while(qtde > 0)
+        {
+            dequeue(&f1, &L);
+            if(prof == pos)
+            {
+                enqueue(&f2, L);
+            }
+            
+            else
+            {
+                while(L != NULL)
+                {
+                    if(!nulo(head(L)) && !atomo(head(L)))
+                        enqueue(&f1, head(L));
+                    L = tail(L);
+                }
+            }
+            qtde--;
+        }
+        prof++;
+    }
+    while(!vazio(f2))
+    {
+        
+        dequeue(&f2, &L);
+        int ta = tem_atomo(L, info);
+        if(ta)
+        {
+            printf("Nao foi possivel adicionar pois o atomo ja existe nesse nivel\n");
+        }
+        else
+            insercao_direta(&L, info);
+    }
+    
+}
+
 
 
 
