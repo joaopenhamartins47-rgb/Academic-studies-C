@@ -86,7 +86,40 @@ ordenando todos os átomos de cada uma de suas sublistas. O algoritmo deve orden
 
 //Primeiro, a ordenacao em linha com selecao direta
 
-void selecao_direta()
+void selecao_direta(Listagen *L)
+{
+    Listagen *pi = L; //Vou andar com pi, mas pode-se andar com L tambem
+    Listagen *pj, *pmenor;
+
+    while(!nulo(tail(pi))) //Pois iremos parar no ultimo no
+    {
+        if(atomo(head(pi)))
+        {
+            pmenor = pi;
+            pj = tail(pi); //Pois o pj comeca um a frente do pi
+            //Percorre a linha do pj
+            while(!nulo(pj))
+            {
+                if(atomo(head(pj)))
+                {
+                    if(strcmp(head(pj)->no.info, head(pmenor)->no.info) < 0)
+                        pmenor = pj;
+                }
+                pj = tail(pj);
+            }
+            char aux[8];
+            //Realiza a permutacao com aux
+            strcpy(aux, head(pi)->no.info);
+            strcpy(head(pi)->no.info, head(pmenor)->no.info);
+            strcpy(head(pmenor)->no.info, aux);
+        }
+        pi = tail(pi);
+    }
+}
+
+//Agora iremos salvar na fila os inicios de cada lista e sublista
+
+
 
 
 
