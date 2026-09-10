@@ -314,6 +314,71 @@ void insere(Listagen *L, char info[], int pos) //Percorro com o f1 e no f2 coloc
 }
 
 
+// Andar de forma iterativa utilizando pilha
+
+struct pilhap
+{
+    Listagen *info;
+    struct pilhap *prox;
+};typedef struct pilhap pilha;
+
+char vazia(pilha *p)
+{
+    return p == NULL;
+}
+
+void push(pilha **p, Listagen *info)
+{
+    pilha *novo = (pilha*)malloc(sizeof(pilha));
+    novo->info = info;
+    novo->prox = NULL;
+    if(!*p)
+        *p = novo;
+    else
+    {
+        novo->prox = *p;
+        *p = novo;
+    }
+}
+
+void pop(pilha **p, Listagen **removido)
+{
+    *removido = (*p)->info;
+    pilha *aux = *p;
+    *p = (*p)->prox;
+    free(aux);
+}
+
+
+void exibeI(Listagen *L)
+{
+    //A ideia aqui eh o codigo ter duas partes, uma para andar para baixo, colocando na pilha o head e outra pra andar uma vez de lado, simulando recursividade, mas de forma iterativa
+    pilha *p;
+    init(&p);
+    push(&p, L);
+    while(!vazia(p))
+    {
+        if(!nulo(L))
+        {
+            pop(&p, &L);
+            while(!nulo(L) && !atomo(L))
+            {
+                //Coloca todos os head desse novo L cabeca de lista
+                push(&p, L);
+                L = head(L);
+            }
+            if(atomo(L))
+                printf("%s\n", L->no.info);
+        }
+        pop(&p, &L);
+        L = tail(L);
+        if(!nulo(L))
+            push(&p, L);
+    }
+
+}
+
+
 
 
 
