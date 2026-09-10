@@ -393,13 +393,13 @@ struct caixa
     struct caixa *prox;
 };typedef struct caixa Caixa;
 
-struct listagen
+struct listagenn
 {
     char terminal;
     union Tptipo tipo;
-    struct listagen *cabeca;
-    struct listagen *cauda;
-};typedef struct listagen ListaGen;
+    struct listagenn *cabeca;
+    struct listagenn *cauda;
+};typedef struct listagenn ListaGen;
 
 
 
