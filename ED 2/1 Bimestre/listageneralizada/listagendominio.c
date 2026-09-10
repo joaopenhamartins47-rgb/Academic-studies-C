@@ -375,8 +375,83 @@ void exibeI(Listagen *L)
         if(!nulo(L))
             push(&p, L);
     }
-
 }
+
+//Exercicio de expressoes matematicas considerando algumas funcoes ja implementadas
+
+//Resolver a expressao por exemplo 2+(3-5*(pow(2,3)-3)-8) utilizando listagen
+union Tptipo
+{
+    float valor;
+    char operador;
+    char funcao[15];
+};
+
+struct caixa
+{
+    char termo[15];
+    struct caixa *prox;
+};typedef struct caixa Caixa;
+
+struct listagen
+{
+    char terminal;
+    union Tptipo tipo;
+    struct listagen *cabeca;
+    struct listagen *cauda;
+};typedef struct listagen ListaGen;
+
+
+
+float resolve(char exp[100])
+{
+    ListaGen *L = NULL, *atual;
+    Caixa *lista;// = funcao que separa a string separa(exp);
+    float result;
+    pilha *p, *p2;
+    init(&p);
+    init(&p2);
+    while(lista != NULL)
+    {
+        if(L == NULL)
+        {
+            L = atual; // = criaNo(lista->termo);
+            push(&p2, L);
+        }
+        else
+        {
+            if(strcmp(lista->termo, "(") == 0) //Se for parenteses, define a caixa como valor 0 e cria uma sublista
+            {
+                atual->cauda;// = criaNo("0");
+                atual = tail(atual);
+                lista = lista->prox;
+                atual->cabeca; // = criano(lista->termo);
+                atual = head(atual);
+            }
+            else
+            {
+                if(strcmp(lista->termo, ")") == 0)
+                    pop(&p, &atual);
+                else{
+                    atual->cauda;//= criaNo(lista->termo);
+                    atual = tail(atual);
+                }
+                lista = lista->prox;
+            }
+        }
+        
+    }
+    while(!vazia(p2))
+    {
+        pop(&p2, &atual);
+        if(atual != L)
+            atual->tipo.valor; //=calcula(head(atual));
+        else
+            result;//=calcula(atual); 
+    }
+    return result;
+}
+
 
 
 
