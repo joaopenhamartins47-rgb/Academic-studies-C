@@ -578,6 +578,91 @@ void exclui_nivel(Listagen **L, int nivel)
     }
 }
 
+/*
+4:-) Faça um algoritmo que exclua todos os nodos de Lista que apontam para Lista Nula.
+Exemplo:
+*/
+
+/*
+5:-) Faça um algoritmo que transforme uma Lista Generalizada em uma Fila com
+prioridade, sendo que cada nível dos nodos de Lista corresponde a um nível de prioridade.
+*/
+
+struct fila_pri
+{
+    char at[8];
+    int pri;
+    struct fila_pri *prox;
+};typedef struct fila_pri fila_p;
+
+void enqueue_p(fila_p **f, char *info, int pri)
+{
+    fila_p *novo = (fila_p*)malloc(sizeof(fila_p));
+    strcpy(novo->at, info);
+    novo->pri = pri;
+    novo->prox = NULL;
+    if(!*f)
+        *f = novo;
+    else
+    {
+        fila_p *aux = (*f)->prox, *ant = *f;
+
+        while(aux && novo->pri <= aux->pri)
+        {
+            ant = aux;
+            aux = aux->prox;
+        }
+        //2 casos de insercao, no meio e no final
+        if(!aux) //Insere no final
+        {
+            ant->prox = novo;
+        }
+        else //Insere entre 2
+        {
+            novo->prox = aux;
+            ant->prox = novo;
+        }
+    }
+}
+
+
+void lista_fila(Listagen **L, fila *f, fila_p **f2) //f1 para percorrer e f2 para armazenar
+{
+    Listagen *aux = *L;
+    fila_p *aux_f;
+    fila *qt;
+    int qtde=0, priori=1;
+    init(&f);
+    init(&f2);
+    enqueue(&f, aux);
+    while(!vazio(&f))
+    {
+        qt = f;
+        while(qt) //Conta quantos tem na fila
+        {
+            qtde++;
+            qt = qt->prox;
+        }
+        while(qtde > 0)
+        {
+            dequeue(&f, aux);
+            while(aux)
+            {
+                if(atomo(head(aux)))
+                {
+                    enqueue_p(&f2, aux->no.lista.cabeca->no.info, priori);
+                }
+                else //Se nao for um atomo e nem nulo, eh lista
+                {
+                    enqueue(&f, head(aux));
+                }
+                aux = tail(aux);
+            }
+            qtde--;
+        }
+        priori++;
+    }
+}
 
 
 
