@@ -432,14 +432,14 @@ float resolve(char exp[100])
             {
                 if(strcmp(lista->termo, ")") == 0)
                     pop(&p, &atual);
-                else{
+                else
+                {
                     atual->cauda;//= criaNo(lista->termo);
                     atual = tail(atual);
                 }
                 lista = lista->prox;
             }
         }
-        
     }
     while(!vazia(p2))
     {
@@ -452,7 +452,131 @@ float resolve(char exp[100])
     return result;
 }
 
+/*
+3:-) Faça um algoritmo para excluir os átomos de um dado nível de Lista. Observe que os
+nodos de Lista que apontam para os átomos também são excluídos!
+Exemplos de chamada do algoritmo: exclui_nivel(&L, 2); 
+*/
 
+
+
+
+void exclui_nivel(Listagen **L, int nivel)
+{
+    int prof = 1, qtde=0, primeiro;
+    Listagen *aux = *L, *at, *del_lista, *cab;
+    fila *f, *f2, *qt, *aux_f2;
+    init(&f);
+    init(&f2);
+    enqueue(&f, aux);
+    enqueue(&f2, aux);
+    
+    while(!vazio(f) && prof != nivel)
+    {
+        while(!nulo(f2)) //Se nao for o nivel que eu quero, esvazia a lista
+        {
+            aux_f2 = f2;
+            f2 = f2->prox;
+            free(aux_f2);
+        }
+        qt = f;
+        while(qt) //Percorre a fila e verifica quantos elementos tem nela
+        {
+            qtde++;
+            qt = qt->prox;
+        }
+        while(qtde > 0)
+        {
+            dequeue(&f, &aux);
+            while(aux != NULL)
+            {
+                if(!nulo(head(aux)) && !atomo(head(aux))) //Se nao for nulo e nem atomo, so pode ser uma lista, entao insere
+                {
+                    enqueue(&f, head(aux)); //Lista que eu quero percorrer/excluir
+                    enqueue(&f2, aux); //Lista de cima que aponta para o que eu vou excluir
+                }
+                aux = tail(aux);
+            }
+            qtde--;
+        }
+        prof++;
+    }
+    if(nivel == 1)
+    {
+        Listagen *ant = NULL;
+
+        primeiro = 0;
+
+        while(aux)
+        {
+            if(!nulo(head(aux)) && !atomo(head(aux))) 
+            {
+                if(primeiro == 0)
+                {
+                    cab = aux;         
+                    ant = aux;
+                    primeiro = 1;
+                }
+                else
+                {
+                    ant->no.lista.cauda = aux;
+                    ant = aux;
+                }
+
+                aux = tail(aux);
+            }
+            else 
+            {
+                at = head(aux);
+                del_lista = aux;
+                aux = tail(aux);
+
+                free(at);
+                free(del_lista);
+            }
+        }
+
+        if(primeiro == 1)
+        {
+            ant->no.lista.cauda = NULL;
+            *L = cab;
+        }
+        else
+        {
+            *L = NULL;
+        }
+    }
+    while(!vazio(f) && nivel != 1) //Eh pq encontrou o nivel
+    {
+        dequeue(&f, &aux);
+        primeiro = 0;
+        while(aux)
+        {
+            if(atomo(head(aux)))
+            {
+                at = head(aux);
+                del_lista = aux;
+                aux = tail(aux);
+                free(at);
+                free(del_lista);
+            }
+            else if(primeiro == 0)
+            {
+                primeiro = 1;
+                if(!vazio(f2)){
+                    dequeue(&f2, &cab);
+                    cab->no.lista.cabeca = aux;
+                }
+            }
+            aux = tail(aux);
+        }
+        if(!vazio(f2) && primeiro == 0)
+        {
+            dequeue(&f2, cab);
+            cab->no.lista.cabeca = NULL;
+        }      
+    }
+}
 
 
 
