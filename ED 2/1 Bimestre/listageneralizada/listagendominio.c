@@ -583,6 +583,82 @@ void exclui_nivel(Listagen **L, int nivel)
 Exemplo:
 */
 
+//Aqui eu vou fazer a mesma ideia de exercicios anteriores de ter duas filas, uma pra registrar a lista de cima para fazer as ligacoes e outras com as sublistas
+
+void excluir_nulos(Listagen **L, fila *f1, fila *f2)
+{
+    Listagen *aux = *L, *top, *del_lista, *ant;
+    int primeiro;
+
+    init(&f1);
+    init(&f2);
+
+    enqueue(&f2, aux);
+
+    while(!vazio(f2))
+    {
+        dequeue(&f2, &aux);
+        top = NULL;
+
+        if(!vazio(f1))
+            dequeue(&f1, &top);
+
+        ant = NULL;
+
+        while(aux)
+        {
+            if(!head(aux))
+            {
+                if(ant == NULL)
+                {
+                    del_lista = aux;
+                    aux = tail(aux);
+
+                    
+                    if(top == NULL) //Significa que eh a lista do nivel 1
+                        *L = aux;
+
+                    
+                    else
+                        top->no.lista.cabeca = aux;
+
+                    free(del_lista);
+                }
+                else
+                {
+                    
+                    ant->no.lista.cauda = tail(aux);
+
+                    del_lista = aux;
+                    aux = tail(aux);
+
+                    free(del_lista);
+
+                    
+                }
+            }
+
+            
+            else if(!nulo(head(aux)) && !atomo(head(aux)))
+            {
+                enqueue(&f2, head(aux));
+                enqueue(&f1, aux);
+
+                ant = aux;
+                aux = tail(aux);
+            }
+
+           
+            else if(atomo(head(aux)))
+            {
+                ant = aux;
+                aux = tail(aux);
+            }
+        }
+    }
+}
+
+
 /*
 5:-) Faça um algoritmo que transforme uma Lista Generalizada em uma Fila com
 prioridade, sendo que cada nível dos nodos de Lista corresponde a um nível de prioridade.
