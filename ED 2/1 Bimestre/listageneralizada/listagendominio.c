@@ -814,7 +814,6 @@ void bottom_level_aux(Listagen *L, int n_atual, int nivel)
                 bottom_level_aux(h, n_atual + 1, nivel);
             }
         }
-
         aux = tail(aux);
     }
 }
