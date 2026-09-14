@@ -740,7 +740,94 @@ void lista_fila(Listagen **L, fila *f, fila_p **f2) //f1 para percorrer e f2 par
     }
 }
 
+/*
+6:-) Faça um algoritmo que coloque todos os átomos de uma Lista Generalizada L no
+bottom-level.
+*/
 
+void verifica_nivel(Listagen *L, int *nivel)
+{
+    fila *f, *qt;
+    Listagen *aux;
+    int qtde = 0;
+    *nivel = 1;
+    init(&f);
+    enqueue(&f, L);
+    while(!vazio(f))
+    {
+        qt = f;
+        while(qt)
+        {
+            qtde++;
+            qt = qt->prox;
+        }
+        while(qtde > 0)
+        {
+            dequeue(&f, &aux);
+            while(aux)
+            {
+                if(!nulo(head(aux)) && !atomo(head(aux)))
+                {
+                    enqueue(&f, head(aux));
+                }
+                aux = tail(aux);
+            }
+            qtde--;
+        }
+        if(!vazio(f))
+            (*nivel)++;
+    }
+}
+
+/*
+1. Descobrir o maior nível
+        ↓
+2. Percorrer a LG e guardar todos os átomos
+        ↓
+3. Reconstruir a LG colocando os átomos no nível máximo
+*/
+void bottom_level_aux(Listagen *L, int n_atual, int nivel)
+{
+    Listagen *aux = L;
+
+    while(aux)
+    {
+        Listagen *h = head(aux);
+
+        if(!nulo(h))
+        {
+            if(atomo(h))
+            {
+                Listagen *novo = h;
+                int i = n_atual;
+
+                while(i < nivel) //i representa quantos niveis ainda faltam criar
+                {
+                    novo = cons(novo, NULL);
+                    i++;
+                }
+
+                aux->no.lista.cabeca = novo;
+            }
+            else
+            {
+                bottom_level_aux(h, n_atual + 1, nivel);
+            }
+        }
+
+        aux = tail(aux);
+    }
+}
+
+
+void bottom_level(Listagen *L)
+{
+    int nivel;
+
+    verifica_nivel(L, &nivel);
+
+    coloca_bottom(L, 1, nivel);
+}
 
 int main(void)
 {
