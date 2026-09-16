@@ -235,7 +235,6 @@ void exibir_profundidade(Listagen *L)
                 push(&p, aux);
         }
     }
-        
 }
 
 
