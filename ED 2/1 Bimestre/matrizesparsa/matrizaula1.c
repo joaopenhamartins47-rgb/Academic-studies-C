@@ -69,7 +69,7 @@ void insere_mat(MatEsp* vetlin[], MatEsp* vetcol[], int lin, int col, int valor)
             //Insercao vertical
             if(!vetcol[col])
             {
-                vetlin[col] = nova;
+                vetcol[col] = nova;
                 nova->pc = NULL;
             }
             else
@@ -106,7 +106,6 @@ void exibe_mat(MatEsp *vetlin[])
     {
         j = 0;
         aux = vetlin[i];
-
         while(j < NC)
         {
             if(aux && j == aux->col)
@@ -118,10 +117,8 @@ void exibe_mat(MatEsp *vetlin[])
             {
                 printf("0 ");
             }
-
             j++;
         }
-
         printf("\n");
     }
 }
