@@ -22,7 +22,18 @@ void verifica_ocupado(MatEsp *inicio, int col, MatEsp **aux)
         *aux = NULL;
 }
 
+//a) inicializar uma matriz esparsa;
+void init_matriz(MatEsp * vetlin[], MatEsp *vetcol[])
+{
+    int i, j;
+    for(i=0;i<NL;i++)
+        vetlin[i] = NULL;
 
+    for(j=0;j<NC;j++)
+        vetcol[j] = NULL;
+}
+
+//inserir um determinado elemento na posição i, j;
 void insere_mat(MatEsp* vetlin[], MatEsp* vetcol[], int lin, int col, int valor)
 {
     MatEsp *nova, *ant, *aux;
@@ -122,6 +133,8 @@ void exibe_mat(MatEsp *vetlin[])
         printf("\n");
     }
 }
+
+//excluir um elemento da posição i, j;
 
 
 
