@@ -108,34 +108,6 @@ void insere_mat(MatEsp* vetlin[], MatEsp* vetcol[], int lin, int col, int valor)
     }
 }
 
-void exibe_mat(MatEsp *vetlin[])
-{
-    int i, j;
-    MatEsp *aux;
-
-    for(i = 0; i < NL; i++)
-    {
-        j = 0;
-        aux = vetlin[i];
-        while(j < NC)
-        {
-            if(aux && j == aux->col)
-            {
-                printf("%d ", aux->valor);
-                aux = aux->pl;
-            }
-            else
-            {
-                printf("0 ");
-            }
-            j++;
-        }
-        printf("\n");
-    }
-}
-
-
-
 
 //excluir um elemento da posição i, j;
 void excluir_elemento(MatEsp *vetlin[], MatEsp *vetcol[], int lin, int col)
@@ -196,6 +168,36 @@ void excluir_elemento(MatEsp *vetlin[], MatEsp *vetcol[], int lin, int col)
         printf("Elemento nao encontrado!\n");
     
 }
+
+//exibir uma matriz esparsa
+void exibir_matriz(MatEsp *vetlin[])
+{
+    int i, j;
+    MatEsp *aux;
+    for(i=0; i<NL; i++)
+    {
+        j=0;
+        aux = vetlin[i];
+        while(j<NC)
+        {
+            if(aux && aux->col == j)
+            {
+                printf("%d ", aux->valor);
+                aux = aux->pl;
+            }
+            else
+                printf("0 ");
+            j++;
+        }
+        printf("\n");
+    }
+}
+
+//somar duas matrizes esparsas e gerar uma terceira;
+
+//fazer a multiplicação de duas matrizes esparsas;
+
+//excluir uma matriz esparsa.
 
 
 
