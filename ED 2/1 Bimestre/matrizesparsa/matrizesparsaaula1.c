@@ -134,7 +134,68 @@ void exibe_mat(MatEsp *vetlin[])
     }
 }
 
+
+
+
 //excluir um elemento da posição i, j;
+void excluir_elemento(MatEsp *vetlin[], MatEsp *vetcol[], int lin, int col)
+{
+    //Exclui na posicao horizontal e depois da vertical
+    MatEsp *exclui, *aux, *ant;
+    int achou=0;
+    if(vetlin[lin] && vetcol[col])
+    {
+        if(vetlin[lin]->col == col)
+        {
+            exclui = vetlin[lin];
+            vetlin[lin] = vetlin[lin]->pl;
+            achou = 1;
+        }
+        else
+        {
+            //Faz a procura
+            ant = vetlin[lin], aux = vetlin[lin]->pl;
+            while(aux && aux->col < col)
+            {
+                ant = aux;
+                aux = aux->pl;
+            }
+            if(aux && col == aux->col)
+            {
+                ant->pl = aux->pl;
+                exclui = aux;
+                achou = 1;
+            }
+        }
+    }
+    
+    
+    if(achou)
+    {
+        if(vetcol[col] && vetcol[col]->lin == lin)
+        {
+            vetcol[col] = vetcol[col]->pc;
+        }
+        else
+        {
+            //Faz a procura
+            ant = vetcol[col], aux = vetcol[col]->pc;
+            while(aux && aux->lin < lin)
+            {
+                ant = aux;
+                aux = aux->pc;
+            }
+            if(aux && lin == aux->lin)
+            {
+                ant->pc = aux->pc;
+            }
+        }
+        free(exclui);
+    }
+    else
+        printf("Elemento nao encontrado!\n");
+    
+}
 
 
 
