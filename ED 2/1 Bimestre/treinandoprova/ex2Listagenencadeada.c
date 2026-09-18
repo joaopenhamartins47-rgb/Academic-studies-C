@@ -10,7 +10,7 @@ struct reg_lista
 
 union info_lista
 {
-    char info[8];
+    int num;
     struct reg_lista lista;
 };
 
@@ -51,10 +51,10 @@ Listagen *tail(Listagen *L)
     return L->no.lista.cauda;
 }
 
-Listagen *criat(char info[])
+Listagen *criat(int num)
 {
     Listagen *novo = (Listagen*)malloc(sizeof(Listagen));
-    strcpy(novo->no.info, info);
+    novo->no.num = num;
     novo->terminal = 1;
     return novo;
 }
@@ -106,17 +106,31 @@ void enqueue(fila **f, Listagen *info)
 void dequeue(fila **f, Listagen **removido)
 {
     fila *aux;
-    Listagen *info;
 
     if(*f == NULL)
-        return NULL;
+    {
+        *removido = NULL;
+    }
+    else
+    {
+        aux = *f;
+        *removido = aux->info;
 
-    aux = *f;
-    *removido = aux->info;
+        *f = aux->prox;
 
-    *f = aux->prox;
+        free(aux);
+    }
+    
+}
 
-    free(aux);
+char isEmpty(fila *f)
+{
+    return f == NULL;
+}
+
+void init(fila **f)
+{
+    *f = NULL;
 }
 
 listaen* criaNo(int num, int prof)
@@ -147,7 +161,43 @@ void insere_no(listaen **inicio, int num, int prof)
 }
 //Criar uma lista encadeada de acordo com a listagen com a profundidade e o valor nela
 
-void criar
+void percorre_e_cria(Listagen *L, listaen **inicio)
+{
+    fila *f, *qt;
+    int qtde, prof=1, num;
+    init(&f);
+    enqueue(&f, L);
+    while(!isEmpty(f))
+    {
+        qtde = 0;
+        qt = f;
+        while(qt)
+        {
+            qtde++;
+            qt = qt->prox;
+        }
+        while(qtde > 0)
+        {
+            dequeue(&f, &L);
+            while(!nulo(L))
+            {
+                if(!nulo(head(L)) && !atomo(head(L)))
+                {
+                    enqueue(&f, head(L));
+                }
+                else if(atomo(head(L)))
+                {
+                    num = L->no.lista.cabeca->no.num;
+                    insere_no(&*inicio, num, prof);
+                }
+                L = tail(L);
+            }
+            qtde--;
+        }
+        prof++;
+    }
+}
+
 
 int main(void)
 {
