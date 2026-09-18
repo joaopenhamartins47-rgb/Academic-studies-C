@@ -198,6 +198,84 @@ void percorre_e_cria(Listagen *L, listaen **inicio)
     }
 }
 
+struct Pilha
+{
+    struct Pilha *prox;
+    Listagen *info;
+    int prof;
+
+};typedef struct Pilha pilha;
+
+void init(pilha **p)
+{
+    *p = NULL;
+}
+
+char vazia(pilha *p)
+{
+    return p == NULL;
+}
+
+void push(pilha **p, Listagen *info, int prof)
+{
+    pilha *novo = (pilha*)malloc(sizeof(pilha));
+
+    novo->info = info;
+    novo->prox = *p;
+    novo->prof = prof;
+
+    *p = novo;
+}
+
+void pop(pilha **p, Listagen **removido, int *prof)
+{
+    pilha *aux;
+
+    if(*p == NULL)
+    {
+        *removido = NULL;
+    }
+    else
+    {
+        aux = *p;
+        *prof = aux->prof;
+        *removido = aux->info;
+        *p = aux->prox;
+
+        free(aux);
+    }
+}
+
+void percorrer_pilha(Listagen *L, listaen **inicio)
+{
+    int prof=1;
+    pilha *p;
+    init(&p);
+    push(&p, L, prof);
+    while(!vazia(p))
+    {
+        pop(&p, &L, &prof);
+        while(!nulo(L))
+        {
+            if(!nulo(head(L)) && atomo(head(L)))
+            {
+                insere_no(inicio, L->no.lista.cabeca->no.num, prof);
+
+                L = tail(L);
+            }
+            else if(!nulo(head(L)) && !atomo(head(L)))
+            {
+                if(!nulo(tail(L)))
+                    push(&p, tail(L), prof);
+
+                push(&p, head(L), prof + 1);
+
+                L = NULL;
+            }
+        }
+    }
+}
+
 
 int main(void)
 {
