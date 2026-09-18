@@ -236,7 +236,53 @@ void somar_matrizes(MatEsp *vetlin[], MatEsp *vetcol[], MatEsp *vetlin2[], MatEs
 
 
 
-//fazer a multiplicação de duas matrizes esparsas;
+//multiplicar duas matrizes esparsas e gerar uma terceira;
+
+void multiplicar_matrizes(MatEsp *vetlin[], MatEsp *vetcol[], MatEsp *vetlin2[], MatEsp *vetcol2[], MatEsp *vetlin3[], MatEsp *vetcol3[])
+{
+    MatEsp *aux, *aux2;
+
+    int i, j;
+    int resultado;
+
+    init_matriz(vetlin3, vetcol3);
+
+    for(i=0; i<NL; i++)
+    {
+        for(j=0; j<NC; j++)
+        {
+            aux = vetlin[i];
+            aux2 = vetcol2[j];
+
+            resultado = 0;
+
+            while(aux && aux2)
+            {
+                //mesmo k
+                if(aux->col == aux2->lin)
+                {
+                    resultado = resultado + aux->valor * aux2->valor;
+
+                    aux = aux->pl;
+                    aux2 = aux2->pc;
+                }
+                //k da A menor
+                else if(aux->col < aux2->lin)
+                {
+                    aux = aux->pl;
+                }
+                //k da B menor
+                else
+                {
+                    aux2 = aux2->pc;
+                }
+            }
+
+            if(resultado != 0)
+                insere_mat(vetlin3, vetcol3, i, j, resultado);
+        }
+    }
+}
 
 //excluir uma matriz esparsa.
 void excluir_matriz(MatEsp *vetlin[], MatEsp *vetcol[])

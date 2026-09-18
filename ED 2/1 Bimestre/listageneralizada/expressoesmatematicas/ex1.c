@@ -16,6 +16,108 @@ Obs: Você pode usar Pilha e Fila conforme foi aprendido em aula sem a necessida
 implementação, apenas use as funções de forma correta, com seus devidos nomes e parâmetros!
 */
 
+//Construir a listagen de acordo com as prioridades
+
+union valores
+{
+    float valorF;
+    char operador;
+    char funcao[8];
+};
+
+struct ListaGen
+{
+    struct ListaGen *cabeca;
+    struct ListaGen *cauda;
+    union valores no;
+    char terminal;
+};typedef struct ListaGen Listagen;
+
+struct pilhap
+{
+    Listagen *info;
+    struct pilhap *cabeca;
+};typedef struct pilhap pilha;
+
+
+void init_pilha(pilha **p)
+{
+    *p = NULL;
+}
+
+char isEmpty(pilha *p)
+{
+    return p == NULL;
+}
+
+void push(pilha **p, Listagen *x)
+{
+    pilha *novo;
+
+    novo = (pilha *) malloc(sizeof(pilha));
+
+    novo->info = x;
+    novo->cabeca = *p;
+
+    *p = novo;
+}
+
+void pop(pilha **p, Listagen **x)
+{
+    pilha *aux;
+
+    if(*p != NULL)
+    {
+        aux = *p;
+
+        *x = aux->info;
+
+        *p = aux->cabeca;
+        free(aux);
+    }
+}
+
+Listagen* criaNoF(float valor)
+{
+    Listagen *novo = (Listagen*)malloc(sizeof(Listagen));
+    novo->no.valorF = valor;
+    novo->cabeca = NULL;
+    novo->cauda = NULL;
+    novo->terminal = 'V';
+    return novo;
+}
+
+Listagen* criaNoO(char op)
+{
+    Listagen *novo = (Listagen*)malloc(sizeof(Listagen));
+    novo->no.operador = op;
+    novo->cabeca = NULL;
+    novo->cauda = NULL;
+    novo->terminal = 'O';
+    return novo;
+}
+
+Listagen* criaNoFuncao(char funcao[])
+{
+    Listagen *novo = (Listagen*)malloc(sizeof(Listagen));
+    strcpy(novo->no.funcao, funcao);
+    novo->cabeca = NULL;
+    novo->cauda = NULL;
+    novo->terminal = 'F';
+    return novo;
+}
+
+
+
+void resolve(Listagen *L)
+{
+
+}
+
+void construir_listagen(char exp[])
+{
+
+}
 
 int main(void)
 {
