@@ -194,10 +194,76 @@ void exibir_matriz(MatEsp *vetlin[])
 }
 
 //somar duas matrizes esparsas e gerar uma terceira;
+void somar_matrizes(MatEsp *vetlin[], MatEsp *vetcol[], MatEsp *vetlin2[], MatEsp *vetcol2[], MatEsp *vetlin3[], MatEsp *vetcol3[])
+{
+    //Pra somar 2 matrizes elas precisam ser de tamanhos iguais
+    MatEsp *aux, *aux2;
+    init_matriz(vetlin3, vetcol3);
+    int j, i, resultado;
+    //Como to usando constantes, nao precisa verificar se sao iguais
+    for(i=0; i<NL;i++)
+    {
+        j=0;
+        aux = vetlin[i];
+        aux2 = vetlin2[i];
+        while((aux || aux2) && j<NC)
+        {
+            if((aux && aux2) && j == aux->col && j == aux2->col)
+            {
+                resultado = aux->valor + aux2->valor;
+                if(resultado != 0)
+                    insere_mat(vetlin3, vetcol3, i, aux->col, resultado);
+                aux = aux->pl;
+                aux2 = aux2->pl;
+            }
+            else if(aux && j == aux->col)
+            {
+                resultado = aux->valor;
+                insere_mat(vetlin3, vetcol3, i, aux->col, resultado);
+                aux = aux->pl;
+            }
+            else if(aux2 && j == aux2->col)
+            {
+                resultado = aux2->valor;
+                insere_mat(vetlin3, vetcol3, i, aux2->col, resultado);
+                aux2 = aux2->pl;
+            }
+            j++;
+        }
+    }
+    
+}
+
+
 
 //fazer a multiplicação de duas matrizes esparsas;
 
 //excluir uma matriz esparsa.
+void excluir_matriz(MatEsp *vetlin[], MatEsp *vetcol[])
+{
+    int i, j;
+    MatEsp *aux, *del;
+    for(i=0;i<NL;i++)
+    {
+        j=0;
+        aux = vetlin[i];
+        while(j<NC)
+        {
+            if(aux && aux->col == j)
+            {
+                del = aux;
+                if(vetcol[j] && vetcol[j]->lin == aux->lin)
+                {
+                    vetcol[j] = vetcol[j]->pc;
+                }
+                aux = aux->pl;
+                free(del);
+            }
+            j++;
+        }
+        vetlin[i] = NULL;
+    }
+}
 
 
 
