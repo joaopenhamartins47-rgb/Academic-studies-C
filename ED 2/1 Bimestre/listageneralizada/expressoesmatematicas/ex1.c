@@ -447,6 +447,8 @@ float resolve_linha(Listagen *L)
     return L->no.valorF;
 }
 
+
+
 int main(void)
 {
     return 0;
