@@ -276,6 +276,61 @@ void percorrer_pilha(Listagen *L, listaen **inicio)
     }
 }
 
+//Construa um algoritmo de forma nao recursiva que seja capaz de excluir todas as ocorrencias de uma determinada chave
+
+struct reg_lista
+{
+    struct listagen *cabeca;
+    struct listagen *cauda;
+};
+
+union info_lista
+{
+    char info[8];
+    struct reg_lista lista;
+};
+
+struct listagen
+{
+    char terminal;
+    union info_lista no;
+};typedef struct listagen ListaGen;
+
+
+void excluir_elemento(ListaGen *L, char info[])
+{
+    ListaGen *aux;
+    pilha *p;
+    init(&p);
+    push(&p, L);
+    while(!vazia(p))
+    {
+        pop(&p, &L);
+        while(!nulo(L))
+        {
+            if(!nulo(head(L)) && atomo(head(L)))
+            {
+                if(strcmp(L->no.lista.cabeca->no.info, info) == 0)
+                {
+                    aux = head(L);
+                    free(aux);
+                    L->no.lista.cabeca = cons(NULL, NULL);
+                }
+                L = tail(L);
+            }
+            else if(!nulo(head(L)) && !atomo(head(L)))
+            {
+                //Guarda o tail da lista acima e percorre pra baixo
+                if(!nulo(tail(L)))
+                    push(&p, tail(L));
+                L = head(L);
+            }
+        }
+    }
+}
+
+//No algoritmo acima, se percorre a lista gen utilizando a pilha do tail caso encontre uma sublista, pois encontrando, o L eh atualizado para o head dela e guarda-se o tail da lista acima na pilha para percorrer depois, se acha atomo, percorre com tail de L normal, se acha sublista, o L eh atualizado para o head e o tail da lista pai vai para a pilha
+
 
 int main(void)
 {
