@@ -230,13 +230,25 @@ void inserir_listaencadeada(listaen **inicio, char sobrenome[], int qtde, int ni
     }
 }
 
-void busca_sobrenome(listaen *inicio, char sobrenome[])
+listaen *busca_sobrenome(listaen *inicio, char sobrenome[])
 {
-    
+    while(inicio != NULL && strcmp(sobrenome, inicio->sobrenome) != 0)
+        inicio = inicio->prox;
+
+    return inicio;
+
 }
 
-void atualizar_sobrenome(listaen *inicio, int qtde, int nivel)
+void atualizar_sobrenome(listaen *end, int qtde, int nivel)
 {
+    nonivel *novo = (nonivel*)malloc(sizeof(nonivel));
+    novo->prox = NULL;
+    novo->prof = nivel;
+    end->qtde = qtde+1;
+    nonivel *aux = end->lista_niveis;
+    while(aux->prox != NULL)
+        aux = aux->prox;
+    aux->prox = novo;
 
 }
 
