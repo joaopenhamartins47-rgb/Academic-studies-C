@@ -170,7 +170,7 @@ struct NoNivel
 {
     int prof;
     struct NoNivel *prox;
-};
+};typedef struct NoNivel nonivel;
 
 struct Listaen
 {
@@ -180,6 +180,65 @@ struct Listaen
     struct Listaen *prox; 
 };
 typedef struct Listaen listaen;
+
+void inserir_listaencadeada(listaen **inicio, char sobrenome[], int qtde, int nivel)
+{
+    listaen *novo = (listaen*)malloc(sizeof(listaen));
+    novo->prox = NULL;
+    novo->qtde = qtde;
+    strcpy(novo->sobrenome, sobrenome);
+    novo->lista_niveis = NULL;
+
+    nonivel *novo_ni = (nonivel*)malloc(sizeof(nonivel));
+    novo_ni->prox = NULL; //Precisa inicializar, igual foi no lista niveis em cima
+    novo_ni->prof = nivel;
+
+    nonivel *aux_ni;
+
+    aux_ni = novo->lista_niveis;
+
+    if(!aux_ni)
+        novo->lista_niveis = novo_ni;
+    
+        
+    
+    if(!*inicio)
+    {
+        *inicio = novo;
+    }
+    else
+    {
+        listaen *aux = *inicio,  *ant = NULL;
+        while(aux != NULL && strcmp(sobrenome, aux->sobrenome) > 0)
+        {
+            ant = aux;
+            aux = aux->prox;
+        }
+
+        if(aux == *inicio)
+        {
+            novo->prox = *inicio;
+            *inicio = novo;
+        }
+        else
+        {
+            ant->prox = novo;
+            novo->prox = aux;
+        }
+        
+        
+    }
+}
+
+void busca_sobrenome(listaen *inicio, char sobrenome[])
+{
+    
+}
+
+void atualizar_sobrenome(listaen *inicio, int qtde, int nivel)
+{
+
+}
 
 //1 - Percorrer uma lista gen e armazenar numa estrutura auxiliar a quantidade de vezes que aquele sobrenome aparece junto com a profundidade com que aparece
 
