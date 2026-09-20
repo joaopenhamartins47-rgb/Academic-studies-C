@@ -10,7 +10,7 @@ struct reg_lista
 
 union info_lista
 {
-    char info[8];
+    char info[50];
     struct reg_lista lista;
 };
 
@@ -256,6 +256,83 @@ void atualizar_sobrenome(listaen *end, int qtde, int nivel)
 
 //Pra esse algoritmo eu vou utilizar a estrutura do tipo fila pra percorrer e uma lista encadeada para armazenar os sobrenomes, assim consigo ter um controle maior sobre a profundidade
 
+
+void relatorio_sobrenome(Listagen *L)
+{
+    listaen *inicio = NULL, *busca, *aux;
+    nonivel *aux_ni;
+    fila *f1, *qt;
+    int qtd=0, profundidade=1, tamanho, j;
+    char sobrenome[20], at[50];
+    init_f(&f1);
+    enqueue(&f1, L);
+    while(!vazia_f(f1))
+    {
+        qt = f1;
+        while(qt)
+        {
+            qtd++;
+            qt = qt->prox;
+        }
+        while(qtd > 0)
+        {
+            dequeue(&f1, &L);
+            while(!nulo(L))
+            {
+                if(!nulo(head(L)) && !atomo(head(L)))
+                {
+                    enqueue(&f1, head(L));
+                }
+                else if(!nulo(head(L)) && atomo(head(L)))
+                {
+                    j=0;
+                    //Se for atomo faz o tratamento da string
+                    strcpy(at, L->no.lista.cabeca->no.info);
+                    tamanho = strlen(at)-1;
+                    while(at[tamanho] != ' ')
+                        tamanho--;
+
+                    tamanho++; //pula o espaco da string
+                    for(j=0; at[tamanho] != '\0'; j++, tamanho++)
+                    {
+                        sobrenome[j] = at[tamanho];
+                    }
+                    sobrenome[j] = '\0';
+                    busca = busca_sobrenome(inicio, sobrenome);
+                    if(busca)
+                    {
+                        atualizar_sobrenome(busca, busca->qtde, profundidade);
+                    }
+                    else
+                    {
+                        inserir_listaencadeada(&inicio, sobrenome, 1, profundidade);
+                    }
+                }
+                L = tail(L);
+            }
+            qtd--;
+        }
+        profundidade++;
+    }
+    //Relatorio
+    aux = inicio;
+    while(aux != NULL)
+    {
+        printf("%s = %d -> niveis = ", aux->sobrenome, aux->qtde);
+        aux_ni = aux->lista_niveis;
+        while(aux_ni != NULL)
+        {
+            if(aux_ni->prox != NULL)
+                printf("%d, ", aux_ni->prof);
+            else
+                printf("%d", aux_ni->prof);
+            aux_ni = aux_ni->prox;
+        }
+        printf("\n");
+        aux = aux->prox;
+    }
+
+}
 
 
 int main(void)
