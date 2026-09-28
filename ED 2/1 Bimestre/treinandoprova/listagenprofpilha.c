@@ -122,7 +122,6 @@ struct filap
 {
     struct filap *prox;
     char at[12];
-    int nivel;
 };
 
 typedef struct filap fila;
@@ -134,7 +133,6 @@ void enqueue(fila **f, char info[])
     fila *novo = (fila*)malloc(sizeof(fila));
 
     strcpy(novo->at, info);
-    novo->nivel = -1;      
     novo->prox = NULL;
 
     if (*f == NULL)
@@ -152,21 +150,19 @@ void enqueue(fila **f, char info[])
     }
 }
 
-void dequeue(fila **f, char *removido, int *nivel)
+void dequeue(fila **f, char *removido)
 {
     fila *aux;
 
     if (*f == NULL)
     {
         removido[0] = '\0';
-        *nivel = -1;
     }
     else
     {
         aux = *f;
 
         strcpy(removido, aux->at);
-        *nivel = aux->nivel;
 
         *f = aux->prox;
 
@@ -193,14 +189,6 @@ void inserir_fim(Listagen *L, Listagen *elemento)
     }
 }
 
-void definir_nivel_fila(fila *f, int nivel)
-{
-    while (f != NULL)
-    {
-        f->nivel = nivel;
-        f = f->prox;
-    }
-}
 
 char isEmpty(fila *f)
 {
@@ -228,7 +216,6 @@ Listagen *construir_listagen_prof(char entrada[])
     int j;
     int nivel_atual = 1;
     int nivel_desejado;
-    int nivel_atom;
 
     char palavra[12];
 
@@ -239,16 +226,12 @@ Listagen *construir_listagen_prof(char entrada[])
 
     atual = raiz;
 
-    push(&p, raiz);
-
     while (entrada[i] != '\0')
     {
         if (entrada[i] == ' ' || entrada[i] == ',' || entrada[i] == '(')
         {
             i++;
         }
-
-        
 
         else if (entrada[i] >= 'a' && entrada[i] <= 'z')
         {
@@ -261,21 +244,20 @@ Listagen *construir_listagen_prof(char entrada[])
 
             palavra[j] = '\0';
 
-            
             enqueue(&f, palavra);
         }
-
-        
 
         else if (entrada[i] == '#')
         {
             i++;
-            nivel_desejado = entrada[i] - '0';
-            i++;
-            
-            definir_nivel_fila(&f, nivel_desejado);
 
-            
+            nivel_desejado = 0;
+
+            while (entrada[i] >= '0' && entrada[i] <= '9')
+            {
+                nivel_desejado = nivel_desejado * 10 + (entrada[i] - '0');
+                i++;
+            }
 
             while (nivel_atual > nivel_desejado)
             {
@@ -285,32 +267,31 @@ Listagen *construir_listagen_prof(char entrada[])
 
             while (nivel_atual < nivel_desejado)
             {
-                
                 nova = cons(NULL, NULL);
 
-                
+              
                 inserir_fim(atual, nova);
-
-                
-                atual = nova;
 
                 
                 push(&p, atual);
 
+               
+                atual = nova;
+
                 nivel_atual++;
             }
 
+            /* Coloca os átomos pendentes neste nível */
             while (!isEmpty(f))
             {
-                dequeue(&f, palavra, &nivel_atom);
+                dequeue(&f, palavra);
 
-                
                 inserir_fim(atual, criat(palavra));
             }
         }
 
-        
-        else if (entrada[i] == ')') //ai volta pra raiz
+        /* Terminou um grupo: volta para a raiz */
+        else if (entrada[i] == ')')
         {
             while (nivel_atual > 1)
             {
