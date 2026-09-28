@@ -252,6 +252,8 @@ void gerar_matrizesparsa(coluna **pCliente, linha **pAnos)
     }
 }
 
+//
+
 
 
 
