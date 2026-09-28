@@ -200,6 +200,22 @@ void init(fila **f)
     *f = NULL;
 }
 
+Listagen *nova_celula_fim(Listagen *L)
+{
+    Listagen *aux;
+    Listagen *nova;
+
+    nova = cons(NULL, NULL);
+
+    aux = L;
+
+    while (aux->no.lista.cauda != NULL)
+        aux = aux->no.lista.cauda;
+
+    aux->no.lista.cauda = nova;
+
+    return nova;
+}
 
 //Construir uma lista gen do zero de acordo com uma entrada string que fornece os nomes e a profundidade 
 
@@ -293,6 +309,7 @@ Listagen *construir_listagen_prof(char entrada[])
         /* Terminou um grupo: volta para a raiz */
         else if (entrada[i] == ')')
         {
+            
             while (nivel_atual > 1)
             {
                 pop(&p, &atual);
@@ -300,6 +317,16 @@ Listagen *construir_listagen_prof(char entrada[])
             }
 
             i++;
+
+            /* Ignora vírgula e espaços */
+            while (entrada[i] == ' ' || entrada[i] == ',')
+                i++;
+
+           
+            if (entrada[i] != '\0')
+            {
+                atual = nova_celula_fim(raiz);
+            }
         }
 
         else
