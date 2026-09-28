@@ -338,6 +338,61 @@ Listagen *construir_listagen_prof(char entrada[])
     return raiz;
 }
 
+//Para treinar pilha e niveis de profundidade em listagen
+
+/*
+Exercício — Percorrer uma Lista Generalizada por níveis
+
+Considere uma Lista Generalizada L já pronta com a seguinte estrutura:
+
+L = ((a, (b, c)), d, ((e, f)), g)
+
+A função deve percorrer toda a LG de forma iterativa, usando:
+
+uma única pilha;
+uma única variável inteira nivel;
+as funções head, tail, atomo, nulo, push e pop;
+não pode usar recursão.
+Sua função deve imprimir cada átomo junto com seu nível:
+a -> nivel 2
+b -> nivel 3
+c -> nivel 3
+d -> nivel 1
+e -> nivel 3
+f -> nivel 3
+g -> nivel 1
+*/
+
+void imprimir_atomos_com_niveis(Listagen *L)
+{
+    pilha *p;
+    int prof=1;
+    init_p(&p);
+    push(&p, L);
+    Listagen *aux = L;
+    while(!vazia(p))
+    {
+        if(prof > 1)
+            prof--;
+        pop(&p, &aux);
+        while(aux)
+        {
+            if(!nulo(head(aux)) && !atomo(head(aux)))
+            {
+                push(&p, tail(aux));
+                aux = head(aux);
+
+                prof++;
+            }
+            else if(!nulo(head(aux)) && atomo(head(aux)))
+            {
+                printf("%s -> nivel %d\n", aux->no.lista.cabeca->no.info, prof);
+                aux = tail(aux);
+            }
+        }
+    }
+}
+
 
 
 
