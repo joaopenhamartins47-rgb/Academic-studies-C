@@ -290,6 +290,209 @@ void insere(Listagen **L, char info[], int prof)
 }
 
 
+//Exercicio: Excluir todos os atomos que contenham a mensagem passada por parametro, alinhando os ponteiros da lista pai e sublistas quando necessario
+
+/*
+Ideias: Eu so vou precisar alterar o ponteiro da lista pai quando o atomo da cabeca da primeira lista dele for o elemento que eu quero excluir, senao a alteracao eh feita na propria sublista
+
+Vou utilizar a abordagem de percorrer com pilha guardando o e o tail sempre que for sublista e percorrendo com aux = head(L)
+*/
+
+
+void excluir_atomos(Listagen **L, char at[])
+{
+
+}
+
+
+
+//Exercicio: Exclusao de uma matriz esparsa dado um range em string (ex: D2J5) Listas encadeadas para representar linhas e colunas, fazer toda a exclusao realizando as operacoes certas de ponteiros e listas encadeadas
+
+struct MatrizEsparsa
+{
+    int lin;
+    char col;
+    struct MatrizEsparsa *pc, *pl;
+};typedef struct MatrizEsparsa Matesp;
+
+struct Descritor
+{
+    struct Linha *plinha;
+    struct Coluna *pcoluna;
+};typedef struct Descritor desc;
+
+struct Coluna
+{
+    char info;
+    struct MatrizEsparsa *primC;
+    struct Coluna *prox;
+};typedef struct Coluna coluna;
+
+struct Linha
+{
+    int info;
+    struct MatrizEsparsa *primA;
+    struct Linha *prox;
+};typedef struct Linha linha;
+
+void excluir_range(desc **planilha, char range[])
+{
+    char ini, fim;
+    int lin_ini, lin_fim;
+    int entrou;
+
+    ini = range[0];
+    fim = range[2];
+
+    lin_ini = atoi(&range[1]); // OU lin_ini = range[1] - '0';
+    lin_fim = atoi(&range[3]);
+
+
+    
+
+    linha *auxl = (*planilha)->plinha, *antl = NULL;
+    coluna *auxc = (*planilha)->pcoluna, *antc = NULL;
+
+    linha *remover_l;
+    coluna *remover_col;
+
+
+
+    while(auxl && auxl->info < lin_ini)
+    {
+        antl = auxl;
+        auxl = auxl->prox;
+    }
+
+    while(auxc && auxc->info < ini)
+    {
+        antc = auxc;
+        auxc = auxc->prox;
+    }
+
+
+
+    while(auxc && auxc->info <= fim)
+    {
+        Matesp *caixamat = auxc->primC;
+        Matesp *ant_caixa = NULL;
+        Matesp *remover;
+
+
+        entrou = 0;
+
+
+        // Vou ate a primeira caixa da coluna que esteja dentro das linhas que quero excluir.
+
+        while(caixamat && caixamat->lin < lin_ini)
+        {
+            ant_caixa = caixamat;
+            caixamat = caixamat->pc;
+            entrou = 1;
+        }
+
+
+        while(caixamat && caixamat->lin <= lin_fim)
+        {
+            remover = caixamat;
+
+            caixamat = caixamat->pc;
+
+
+            if(!entrou)
+            {
+                auxc->primC = caixamat;
+            }
+            else
+            {
+                ant_caixa->pc = caixamat;
+            }
+        }
+
+
+
+        if(!auxc->primC)
+        {
+            remover_col = auxc;
+            auxc = auxc->prox;
+
+
+
+            if(!antc)
+            {
+                (*planilha)->pcoluna = auxc;
+            }
+            else
+            {
+                antc->prox = auxc;
+            }
+
+            free(remover_col);
+        }
+        else
+        {
+            antc = auxc;
+            auxc = auxc->prox;
+        }
+    }
+
+    while(auxl && auxl->info <= lin_fim)
+    {
+        entrou = 0;
+
+        Matesp *caixamat = auxl->primA;
+        Matesp *ant_caixa = NULL;
+        Matesp *remover;
+
+        while(caixamat && caixamat->col < ini)
+        {
+            ant_caixa = caixamat;
+            caixamat = caixamat->pl;
+            entrou = 1;
+        }
+
+
+        while(caixamat && caixamat->col <= fim)
+        {
+            remover = caixamat;
+
+            caixamat = caixamat->pl;
+
+
+            if(!entrou)
+            {
+                auxl->primA = caixamat;
+            }
+            else
+            {
+                ant_caixa->pl = caixamat;
+            }
+            free(remover);
+        }
+
+        if(!auxl->primA) //Remove a linha
+        {
+            remover_l = auxl;
+            auxl = auxl->prox;
+
+            if(!antl)
+            {
+                (*planilha)->plinha = auxl;
+            }
+            else
+            {
+                antl->prox = auxl;
+            }
+
+            free(remover_l);
+        }
+        else
+        {
+            antl = auxl;
+            auxl = auxl->prox;
+        }
+    }
+}
 
 
 int main(void)
