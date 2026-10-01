@@ -299,11 +299,82 @@ Vou utilizar a abordagem de percorrer com pilha guardando o e o tail sempre que 
 */
 
 
-void excluir_atomos(Listagen **L, char at[])
+//Cadeia de cabecas (cada sublista com 1 elemento) que termina no atomo procurado
+char libera_exclusao(Listagen *L, char at[])
 {
-
+    Listagen *cabecas = L;
+    while(!nulo(head(cabecas)) && !atomo(head(cabecas)) && nulo(tail(head(cabecas))))
+        cabecas = head(cabecas);
+    if(!nulo(head(cabecas)) && atomo(head(cabecas)) && strcmp(head(cabecas)->no.info, at) == 0)
+        return 1;
+    return 0;
 }
 
+//Ajusta o ponteiro certo: ant se existir, senao o pai, senao o proprio L
+void religa(Listagen **L, Listagen *pai, Listagen *ant, Listagen *prox)
+{
+    if(ant)
+        ant->no.lista.cauda = prox;
+    else if(pai)
+        pai->no.lista.cabeca = prox;
+    else
+        *L = prox;
+}
+
+void exclui_lista_atomo(Listagen *L)
+{
+    Listagen *aux = L;
+    pilha *p;
+    init_p(&p);
+    while(aux && !atomo(aux)) //Desce pelas cabecas ate o atomo
+    {
+        push(&p, aux);
+        aux = head(aux);
+    }
+    if(aux)
+        push(&p, aux); //Empilha o no atomo tambem
+    while(!vazia(p))
+    {
+        pop(&p, &aux);
+        free(aux);
+    }
+}
+
+void excluir_atomos(Listagen **L, char at[])
+{
+    pilha *p, *p2;
+    Listagen *aux, *ant, *pai, *prox;
+    init_p(&p);
+    init_p(&p2);
+    push(&p, *L);
+    push(&p2, NULL); //Lista do primeiro nivel nao tem pai
+    while(!vazia(p))
+    {
+        pop(&p, &aux);
+        pop(&p2, &pai);
+        ant = NULL;
+        while(aux)
+        {
+            if(libera_exclusao(aux, at))
+            {
+                prox = tail(aux);
+                religa(L, pai, ant, prox);
+                exclui_lista_atomo(aux);
+                aux = prox; //ant nao muda
+            }
+            else
+            {
+                if(!nulo(head(aux)) && !atomo(head(aux)))
+                {
+                    push(&p, head(aux)); //Sublista pra processar depois
+                    push(&p2, aux);      //Dono dela eh o pai
+                }
+                ant = aux;
+                aux = tail(aux);
+            }
+        }
+    }
+}
 
 
 //Exercicio: Exclusao de uma matriz esparsa dado um range em string (ex: D2J5) Listas encadeadas para representar linhas e colunas, fazer toda a exclusao realizando as operacoes certas de ponteiros e listas encadeadas
