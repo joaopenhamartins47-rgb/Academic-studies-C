@@ -566,6 +566,109 @@ void excluir_range(desc **planilha, char range[])
 }
 
 
+//Fixacao, 4 jeitos de se percorrer uma listagen, podemos usar: 1 - recursividade, 2 - Pilha, 3 - Fila, 4 - Misto Fila com variavel ou pilha com variavel
+
+//Recursivo conta quantas vezes o elemento apareceu
+int contar_lista(Listagen *L, int *cont, char info[])
+{
+    if(!nulo(L))
+    {
+        if(atomo(L))
+        {
+            if(strcmp(L->no.info, info) == 0)
+                (*cont)++;
+        }
+        else
+        {
+            contar_lista(head(L), cont, info);
+            contar_lista(tail(L), cont, info);
+        }
+    }
+}
+
+
+// 2. Pilha pura (empilha o tail, desce no head, pop quando acaba): refaça o 1a (contar ocorrências), sem recursão.
+
+int conta_lista_pilha(Listagen *L, char info[])
+{
+    pilha *p;
+    int cont=0;
+    init_p(&p);
+    push(&p, L);
+    while(!vazia(p))
+    {
+        pop(&p, &L);
+        if(!nulo(head(L)) && !atomo(head(L)))
+        {
+            if(!nulo(tail(L)))
+                push(&p, tail(L));
+            push(&p, head(L));
+        }
+        else if(!nulo(head(L)) && atomo(head(L)))
+        {
+            if(strcmp(L->no.lista.cabeca->no.info, info) == 0)
+                cont++;
+            if(!nulo(tail(L)))
+                push(&p, tail(L));
+        }
+    }
+}
+
+// 3. Pilha mista retornar a lista que aponta para o atomo junto com o nivel de profundidade dele
+struct Lista
+{
+    Listagen *info;
+    int prof;
+};typedef struct Lista lista;
+
+Listagen* verificar_prof(Listagen *L, char at[])
+{
+    int achou = 0;
+    int prof=1, primeiro=0;
+    pilha *p;
+    init_p(&p);
+    push(&p, L);
+    lista *novo;
+    while(!vazia(p))
+    {
+        if(!primeiro)
+        {
+            primeiro = 1;
+            pop(&p, &L);
+        }
+        else
+        {
+            pop(&p, &L);
+            prof--;
+        }
+
+        while(L && !achou)
+        {
+            if(!nulo(head(L)) && atomo(head(L)))
+            {
+                if(strcmp(L->no.lista.cabeca->no.info, at) == 0)
+                {
+                    novo = (lista*)malloc(sizeof(lista));
+                    novo->info = L;
+                    novo->prof = prof;
+                    achou = 1;
+                }
+                L = tail(L);
+            }
+            else if(!nulo(head(L)) && !atomo(head(L)))
+            {
+                push(&p, tail(L));
+                L = head(L);
+                prof++;
+            }
+        }
+    }
+    if(achou)
+        return novo;
+    return NULL;
+}
+
+
 int main(void)
 {
 
