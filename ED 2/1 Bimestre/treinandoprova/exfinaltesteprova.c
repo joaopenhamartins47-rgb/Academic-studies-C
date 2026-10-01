@@ -247,22 +247,28 @@ void insere(Listagen **L, char info[], int prof)
     int qtde=0, achou;
     init(&f);
     init(&f2);
+
     Listagen *aux = *L;
     int prof_atual=1;
+
     enqueue(&f, aux);
     enqueue(&f2, aux);
+
     while(prof_atual < prof)
     {
         qt = f;
+
         while(qt)
         {
             qtde++;
             qt = qt->prox;
         }
+
         while(qtde > 0)
         {
             dequeue(&f2, &aux);
             dequeue(&f, &aux);
+
             while(aux)
             {
                 if(!nulo(head(aux)) && !atomo(head(aux)))
@@ -270,21 +276,52 @@ void insere(Listagen **L, char info[], int prof)
                     enqueue(&f, head(aux));
                     enqueue(&f2, aux);
                 }
+
                 aux = tail(aux);
             }
+
             qtde--;
         }
+
         prof_atual++;
     }
-    
+
     while(!isEmpty(f2))
     {
         dequeue(&f2, &aux);
-        achou = verifica_linha(head(aux), info);
-        if(!achou)
+
+        if(prof == 1)
         {
-            Listagen *novo = cons(NULL, NULL);
-            inserir_ordenado_linha(&aux, info, novo);
+            achou = verifica_linha(aux, info);
+
+            if(!achou)
+            {
+                Listagen *novo = cons(NULL, NULL);
+
+                if(!nulo(head(aux)) &&
+                atomo(head(aux)) &&
+                strcmp(aux->no.lista.cabeca->no.info, info) > 0)
+                {
+                    novo->no.lista.cabeca = criat(info);
+                    novo->no.lista.cauda = *L;
+
+                    *L = novo;
+                }
+                else
+                {
+                    inserir_ordenado_linha(L, info, novo);
+                }
+            }
+        }
+        else
+        {
+            achou = verifica_linha(head(aux), info);
+
+            if(!achou)
+            {
+                Listagen *novo = cons(NULL, NULL);
+                inserir_ordenado_linha(&aux, info, novo);
+            }
         }
     }
 }
@@ -453,7 +490,6 @@ void excluir_range(desc **planilha, char range[])
         entrou = 0;
 
 
-        // Vou ate a primeira caixa da coluna que esteja dentro das linhas que quero excluir.
 
         while(caixamat && caixamat->lin < lin_ini)
         {
@@ -621,7 +657,7 @@ struct Lista
     int prof;
 };typedef struct Lista lista;
 
-Listagen* verificar_prof(Listagen *L, char at[])
+lista* verificar_prof(Listagen *L, char at[])
 {
     int achou = 0;
     int prof=1, primeiro=0;
