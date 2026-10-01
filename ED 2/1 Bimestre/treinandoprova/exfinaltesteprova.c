@@ -212,7 +212,7 @@ void inserir_ordenado_linha(Listagen **L, char at[], Listagen *info) //Aqui eu p
     Listagen *aux = (*L)->no.lista.cabeca;
     Listagen *ant = NULL;
     int achou = 0;
-    if(!nulo(head(aux)) && atomo(head(aux)) && strcmp(aux->no.info, at) > 0) //Primeiro caso de insercao
+    if(!nulo(head(aux)) && atomo(head(aux)) && strcmp(aux->no.lista.cabeca->no.info, at) > 0) //Primeiro caso de insercao
     {
         info->no.lista.cauda = aux;
         (*L)->no.lista.cabeca = info;
@@ -223,7 +223,7 @@ void inserir_ordenado_linha(Listagen **L, char at[], Listagen *info) //Aqui eu p
         {
             if(!nulo(head(aux)) && atomo(head(aux)))
             {
-                if(strcmp(aux->no.info, at) > 0)
+                if(strcmp(aux->no.lista.cabeca->no.info, at) > 0)
                 {
                     achou = 1;
                 }
