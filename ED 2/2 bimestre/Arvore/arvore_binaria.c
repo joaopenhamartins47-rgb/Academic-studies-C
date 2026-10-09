@@ -171,6 +171,30 @@ void pre_ordem_pilha(arvore *raiz)
     }
 }
 
+void em_ordemI(arvore *raiz) 
+{
+    pilha *p;
+    init(&p);
+    push(&p, raiz);
+    while(!isEmpty(p))
+    {
+        if(raiz)
+        {
+            pop(&p, &raiz);
+            while(raiz)
+            {
+                push(&p, raiz);
+                raiz = raiz->esq;
+            }
+        }
+        pop(&p, &raiz);
+        printf("%d", raiz->info);
+        raiz = raiz->dir;
+        if(raiz)
+            push(&p, raiz);
+    }
+}
+
 
 int main(void)
 {
