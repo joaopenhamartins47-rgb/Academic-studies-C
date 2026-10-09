@@ -154,6 +154,22 @@ void pre_ordemI(arvore *raiz) //Nesse codigo tem 2 partes, uma que avanca todas 
     }
 }
 
+//Outro jeito guardando na pilha sempre o elemento da direita
+void pre_ordem_pilha(arvore *raiz)
+{
+    pilha *p;
+    init(&p);
+    push(&p, raiz);
+    while(!isEmpty(p))
+    {
+        pop(&p, &raiz);
+        printf("%d", raiz->info);
+        if(raiz->dir)
+            push(&p, raiz->dir);
+        if(raiz->esq)
+            push(&p, raiz->esq);
+    }
+}
 
 
 int main(void)
