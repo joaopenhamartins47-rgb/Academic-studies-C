@@ -195,6 +195,36 @@ void em_ordemI(arvore *raiz)
     }
 }
 
+void pos_ordemI(arvore *raiz) 
+{
+    pilha *p, *p2;
+    init(&p);
+    init(&p2);
+    push(&p, raiz);
+    while(!isEmpty(p))
+    {
+        if(raiz)
+        {
+            pop(&p, &raiz);
+            while(raiz)
+            {
+                push(&p2, raiz);
+                push(&p, raiz);
+                raiz = raiz->dir;
+            }
+        }
+        pop(&p, &raiz);
+        raiz = raiz->esq;
+        if(raiz)
+            push(&p, raiz);
+    }
+    while(!isEmpty(p2))
+    {
+        pop(&p2, &raiz);
+        printf("%d", raiz->info);
+    }
+}
+
 
 int main(void)
 {
