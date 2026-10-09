@@ -85,6 +85,76 @@ void pos_ordem(arvore *raiz) //Imprime os elementos de baixo pra cima, bom para 
 }
 
 
+//Agora de forma iterativa, temos 2 jeitos padroes de codigo, seguindo a logica do pre-ordem, em-ordem e pos-ordem
+
+//Utilizamos pilha pra percorrer
+struct Pilha
+{
+    arvore *info;
+    struct Pilha *prox;
+};
+typedef struct Pilha pilha;
+
+void init(pilha **p)
+{
+    *p = NULL; 
+}
+
+void push(pilha **topo, arvore *info)
+{
+    pilha *novo = (pilha*) malloc(sizeof(pilha));
+
+    if(novo != NULL)
+    {
+        novo->info = info;
+        novo->prox = *topo;
+        *topo = novo;
+    }
+}
+
+void pop(pilha **topo, arvore **removido)
+{
+    pilha *aux;
+
+    if(*topo == NULL)
+        return 0;
+
+    aux = *topo;
+    *removido = aux;
+    *topo = aux->prox;
+    free(aux);
+}
+
+char isEmpty(pilha *topo)
+{
+    return topo == NULL;
+}
+
+void pre_ordemI(arvore *raiz) //Nesse codigo tem 2 partes, uma que avanca todas da esquerda e outra que coloca na pilha o elemento da direita, pra depois ser percorrido
+{
+    pilha *p;
+    init(&p);
+    push(&p, raiz);
+    while(!isEmpty(p))
+    {
+        if(raiz)
+        {
+            pop(&p, &raiz);
+            while(raiz)
+            {
+                printf("%d", raiz->info);
+                push(&p, raiz);
+                raiz = raiz->esq;
+            }
+        }
+        pop(&p, &raiz);
+        raiz = raiz->dir;
+        if(raiz)
+            push(&p, raiz);
+    }
+}
+
+
 
 int main(void)
 {
