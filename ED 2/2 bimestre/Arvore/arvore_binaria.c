@@ -226,6 +226,69 @@ void pos_ordemI(arvore *raiz)
 }
 
 
+//Exercicio de arvore binaria ABB
+
+/*
+Exercício 1 — Implementar a inserção de uma ABB
+Crie uma função com esta assinatura:
+void insereABB(arvore **raiz, int info);
+
+
+Requisitos:
+1. A árvore começa vazia.
+2. O primeiro valor inserido se torna a raiz.
+3. Cada valor seguinte percorre a árvore comparando valores até encontrar uma posição livre.
+4. Valores duplicados não devem ser inseridos.
+5. Você não pode informar manualmente o pai nem a direção de inserção.
+*/
+
+
+void insereABB(arvore **raiz, int info)
+{
+    arvore *aux = *raiz, *pai = NULL;
+    int igual = 0;
+    arvore *novo = (arvore*)malloc(sizeof(arvore));
+    novo->info = info;
+    novo->esq = novo->dir = NULL;
+    if(!*raiz)
+        *raiz = novo;
+    else
+    {
+        //Procura pelo pai para inserir
+        while(aux && !igual)
+        {
+            if(aux->info > info)
+            {
+                pai = aux;
+                aux = aux->esq;
+            }
+            else if(aux->info < info)
+            {
+                pai = aux;
+                aux = aux->dir;
+            }
+            else
+                igual = 1;
+        }
+        if(igual)
+        {
+            printf("Elemento ja existente!\n");
+            free(novo);
+        }
+        else
+        {
+            if(pai)
+            {
+                if(pai->info > info && pai->esq == NULL)
+                    pai->esq = novo;
+                else if(pai->info < info && pai->dir == NULL)
+                    pai->dir = novo;
+            }
+        }
+    }
+}
+
+
 int main(void)
 {
     return 0;
