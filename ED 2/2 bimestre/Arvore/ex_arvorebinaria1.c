@@ -54,7 +54,7 @@ void nivel_arvore(arvore *raiz, int *nivel, arvore *info)
 Faça um algoritmo que retorne o pai de um dado nó de uma Árvore Binária de Busca
 */
 
-//Ideia: Aqui da pra usar o pre-ordem e guardar o anterior na pilha2 para o pai
+//Ideia: Aqui da pra usar o pre-ordem e guardar o anterior na variavel atual
 
 arvore *achar_pai(arvore *raiz, arvore *info)
 {
