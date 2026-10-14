@@ -11,9 +11,6 @@ de um dado nó de uma Árvore Binária de Busca
 
 //vou usar a estrategia de percorrer em camadas igual a de fila em lista gen
 
-
-
-
 void nivel_arvore(arvore *raiz, int *nivel, arvore *info)
 {
     fila *f, *qt;
@@ -51,6 +48,51 @@ void nivel_arvore(arvore *raiz, int *nivel, arvore *info)
         if(!achou)
             *nivel = 0;
     }  
+}
+
+/*
+Faça um algoritmo que retorne o pai de um dado nó de uma Árvore Binária de Busca
+*/
+
+//Ideia: Aqui da pra usar o pre-ordem e guardar o anterior na pilha2 para o pai
+
+arvore *achar_pai(arvore *raiz, arvore *info)
+{
+    pilha *p;
+    arvore *atual, *pai;
+    int achou = 0;
+
+    pai = NULL;
+
+    if (raiz == NULL || info == NULL || raiz == info)
+        return NULL;
+
+    init(&p);
+    push(&p, raiz);
+
+    while (!isEmpty(p) && !achou)
+    {
+        pop(&p, &atual);
+
+        if (atual->esq == info || atual->dir == info)
+        {
+            pai = atual;
+            achou = 1;
+        }
+        else
+        {
+            if (atual->dir)
+                push(&p, atual->dir);
+
+            if (atual->esq)
+                push(&p, atual->esq);
+        }
+    }
+
+    while (!isEmpty(p))
+        pop(&p, &atual);
+
+    return pai;
 }
 
 
