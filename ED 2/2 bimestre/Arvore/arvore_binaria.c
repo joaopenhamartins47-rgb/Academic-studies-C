@@ -241,6 +241,43 @@ void insereABB(arvore **raiz, int info)
 }
 
 
+//Insercao em arvore ABB
+
+//Para a insercao em arvore ABB podemos ter varios algoritmos, como por exemplo o aux para percorrer e a gravacao no ant que representa o pai, ou simplesmente ir andando verificando ate que uma flag seja diferente de 0. O que vou estar usando eh a segunda forma
+
+
+void insereABB(arvore **raiz, int info)
+{
+    arvore *aux;
+    int achou = 0;
+    if(!*raiz)
+        *raiz = criaNo(info);
+    else
+    {
+        aux = *raiz;
+        while(!achou)
+        {
+            if(info < aux->info)
+                if(!aux->esq)
+                {
+                    aux->esq = criaNo(info);
+                    achou = 1;
+                }
+                else
+                    aux = aux->esq;
+            else
+                if(!aux->dir)
+                {
+                    aux->dir = criaNo(info);
+                    achou = 1;
+                }
+                else
+                    aux = aux->dir;
+        }
+    }
+}
+
+
 int main(void)
 {
     return 0;
