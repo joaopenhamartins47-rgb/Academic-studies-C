@@ -147,6 +147,7 @@ void em_ordemI(arvore *raiz)
     }
 }
 
+//No pos-ordem Iterativo, muito usado em casos de exclusao por exemplo, a ideia eh vc ter duas pilhas, uma para percorrer a estrura da arvore msm e outra pra guadar os dados a fim de exibir depois invertido (ja que eh uma pilha). Diferente do pre-ordem, aqui vc percorre pela direita e depois guarda o da esquerda se tiver
 void pos_ordemI(arvore *raiz) 
 {
     pilha *p, *p2;
