@@ -277,6 +277,21 @@ void insereABB(arvore **raiz, int info)
     }
 }
 
+//Agora para inserir de forma recursiva, utiliza-se a mesma ideia da forma iterativa, porem com a recursividade presente
+
+void insereABBR(arvore **raiz, int info)
+{
+    if(!*raiz)
+        *raiz = criaNo(info);
+    else
+    {
+        if(info < (*raiz)->info)
+            insereABBR(&(*raiz)->esq, info);
+        else
+            insereABBR(&(*raiz)->dir, info);
+    }
+}
+
 
 int main(void)
 {
