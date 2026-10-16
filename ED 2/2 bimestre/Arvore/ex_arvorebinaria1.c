@@ -95,6 +95,22 @@ arvore *achar_pai(arvore *raiz, arvore *info)
     return pai;
 }
 
+//4:-) Faça um algoritmo para tornar uma árvore Vazia (free em todos os nodos da árvore).
+
+//Para retirar todos os nodos eu posso usar o pos-ordem
+
+void esvaziar_arvoreR(arvore **raiz)
+{
+    if(*raiz)
+    {
+        esvaziar_arvoreR(&(*raiz)->esq);
+        esvaziar_arvoreR(&(*raiz)->dir);
+        free(*raiz);
+        //Para evitar dangling pointer
+        *raiz = NULL;
+    }
+}
+
 
 
 
