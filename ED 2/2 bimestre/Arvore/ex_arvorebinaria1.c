@@ -111,6 +111,41 @@ void esvaziar_arvoreR(arvore **raiz)
     }
 }
 
+void esvaziar_arvoreI(arvore **raiz)
+{
+    //Para o algoritmo pos-ordem iterativo, a gente simula o pre-ordem, mas indo para a direita ao inves da esquerda e guardando numa segunda pilha
+    arvore *aux = *raiz;
+    pilha *p, *p2;
+    if(*raiz)
+    {
+        init(&p); init(&p2);
+        push(&p, aux);
+        while(!isEmpty(p))
+        {
+            if(aux) //fundamental para voltar na arvore
+            {
+                pop(&p, &aux);
+                while(aux)
+                {
+                    push(&p, aux);
+                    push(&p2, aux);
+                    aux = aux->dir;
+                }
+            }
+            pop(&p, &aux);
+            aux = aux->esq;
+            if(aux)
+                push(&p, aux);
+        }
+        while(!isEmpty(p2))
+        {
+            pop(&p2, &aux);
+            free(aux);
+        }
+        *raiz = NULL;
+    }
+}
+
 
 
 
