@@ -50,6 +50,37 @@ void nivel_arvore(arvore *raiz, int *nivel, arvore *info)
     }  
 }
 
+//Utilizando pilha
+
+int nivel_prof(arvore *raiz, int info)
+{
+    pilha *p;
+    int nivel = 0; 
+    init(&p);
+    //A ideia desse algoritmo eh colocar na pilha todos os nos de cima e ir acrescentando o nivel enquanto retira da fila para contar a profundidade
+    while(raiz && raiz->info != info)
+    {
+        push(&p, raiz);
+        if(info < raiz->info)
+            raiz = raiz->esq;
+        else
+            raiz = raiz->dir;
+    }
+    if(raiz)
+    {
+        while(!isEmpty(p))
+        {
+            nivel++;
+            pop(&p, &raiz);
+        }
+        return nivel;
+    }
+    while (!isEmpty(p))
+        pop(&p, &raiz);
+    return -1;
+    
+}
+
 /*
 Faça um algoritmo que retorne o pai de um dado nó de uma Árvore Binária de Busca
 */
