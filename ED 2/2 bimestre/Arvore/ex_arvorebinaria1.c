@@ -222,6 +222,34 @@ void insercao_arvore_vetor(int vet[], int valor)
 }
 
 
+/*
+Nível 1 — Fixar quando usar fila ou pilha
+Exercício 1 — Percorrer em nível
+Faça uma função que imprima todos os valores da ABB em nível, utilizando uma fila, sem recursão.
+*/
+
+void imprimir_em_nivel(arvore *raiz)
+{
+    if(!raiz)
+        printf("Raiz nula!\n");
+    else
+    {
+        fila *f;
+        init(&f);
+        enqueue(&f, raiz);
+        while(!isEmptyF(f))
+        {
+            dequeue(&f, &raiz);
+            printf("%d ", raiz->info);
+            if(raiz->esq)
+                enqueue(&f, raiz->esq);
+            if(raiz->dir)
+                enqueue(&f, raiz->dir);
+        }
+    }
+    
+}
+
 
 
 
