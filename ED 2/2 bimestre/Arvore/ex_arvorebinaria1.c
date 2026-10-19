@@ -3,7 +3,7 @@
 #include <string.h>
 #include <TADarvore.h>
 
-
+#define TF 30
 /*
 Faça um algoritmo que retorne por referência ou por return o nível (ou profundidade)
 de um dado nó de uma Árvore Binária de Busca
@@ -77,8 +77,8 @@ int nivel_prof(arvore *raiz, int info)
     }
     while (!isEmpty(p))
         pop(&p, &raiz);
+        
     return -1;
-    
 }
 
 /*
@@ -177,11 +177,57 @@ void esvaziar_arvoreI(arvore **raiz)
     }
 }
 
+/*
+6 - Um vetor numérico pode ser utilizado para representar uma árvore ABB. Para isso
+você precisa percorrer a árvore utilizando as contas:
+Ramificação esquerda: pai*2+1
+Ramificação direita: pai*2+2
+Faça algoritmos para:
+a) inserir na árvore ABB.
+b) percorrer a árvore ABB em nível ou profundidade.
+c) percorrer a árvore ABB em pré-ordem, in-ordem, pós-ordem de forma recursiva e
+também iterativa.
+*/
+
+void inicializar_arvore_vet(int vet[])
+{
+    int i = 0;
+    for( ; i<TF; i++)
+    {
+        vet[i] = 0;
+    }
+}
+
+
+void insercao_arvore_vetor(int vet[], int valor)
+{
+    int i = 0;
+    int achou = 0;
+    if(vet[i] == 0)
+        vet[i] = valor;
+    else
+    {
+        while(i < TF && vet[i] != 0 && !achou)
+        {
+            if(valor < vet[i])
+                i = i*2+1;
+            else if(valor > vet[i])
+                i = i*2+2;
+            else
+                achou = 1;
+        }
+        if(i < TF && !achou)
+            vet[i] = valor;
+    }
+}
+
 
 
 
 
 int main(void)
 {
+    int vet[TF];
+    inicializar_arvore_vet(vet);
     return 0;
 }
