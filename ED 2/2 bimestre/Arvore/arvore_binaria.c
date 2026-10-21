@@ -323,6 +323,68 @@ arvore *buscaABBR(arvore *raiz, int info)
     return buscaABBR(raiz->dir, info);
 }
 
+//Busca que retorna o elemento a ser excluido e o pai
+void busca_exclusao(arvore *raiz, int info, arvore **ex, arvore **pai)
+{
+    *pai = raiz;
+    while(raiz && raiz->info != info)
+    {
+        *pai = raiz;
+        if(info < raiz->info)
+            raiz = raiz->esq;
+        else
+            raiz = raiz->dir;
+    }
+    if(!raiz)
+        pai = NULL;
+    *ex = raiz;
+}
+
+/*Para a exclusao de um determinado no em uma arvore ABB devemos tratar 3 casos
+1 - Quando o elemento for folha
+2 - Quando o elemento tem 1 filho
+3 - Quando o elemento tem 3 filhos
+
+Casos a considerar:
+
+Exclusao da raiz:
+e diferente do pai
+e igual ao pai
+
+Exclusao do lado esquerdo 
+Exclusao do lado direito
+*/
+
+void excluir_no_arvore(arvore **raiz, arvore *pai, arvore *e, char lado, int info)
+{
+    pai = NULL;
+    e = NULL;
+    busca_exclusao(raiz, info, &e, &pai);
+    if(!e && !pai)
+        printf("Erro ao achar elemento!");
+    else
+    {
+        //Primeiro caso de remocao, se o elemento for folha
+        if(!e->esq && !e->dir)
+        {
+            //4 casos a considerar, se for raiz ou nao e se for remover da esquerda ou da direita
+            if(e != pai)// 1
+            {
+                if(e->info < pai->info) //2
+                    pai->esq = NULL; //Corta a conexao
+                else //3
+                    pai->dir = NULL;
+            }
+            else //4
+                *raiz = NULL;
+            free(e);
+        }
+    }
+
+}
+
+
+
 
 int main(void)
 {
