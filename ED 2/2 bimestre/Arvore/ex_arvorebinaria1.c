@@ -247,7 +247,6 @@ void imprimir_em_nivel(arvore *raiz)
                 enqueue(&f, raiz->dir);
         }
     }
-    
 }
 
 

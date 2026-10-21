@@ -294,6 +294,36 @@ void insereABBR(arvore **raiz, int info)
 }
 
 
+//Anotacoes Aula busca e exclusao em arvore ABB
+
+//Para a busca em arvore ABB podemos fazer do jeito recursivo ou iterativo
+
+//---Jeito iterativo---
+
+arvore *buscaABBI(arvore *raiz, int info)
+{
+    while(raiz && raiz->info != info)
+    {
+        if(info < raiz->info)
+            raiz = raiz->esq;
+        else
+            raiz = raiz->dir;
+    }
+    return raiz;
+}
+
+//--Jeito recursivo--
+
+arvore *buscaABBR(arvore *raiz, int info)
+{
+    if(!raiz || raiz->info == info)
+        return raiz;
+    if(info < raiz->esq)
+        return buscaABBR(raiz->esq, info);
+    return buscaABBR(raiz->dir, info);
+}
+
+
 int main(void)
 {
     return 0;
