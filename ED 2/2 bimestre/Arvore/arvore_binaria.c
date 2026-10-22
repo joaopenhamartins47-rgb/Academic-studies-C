@@ -343,7 +343,7 @@ void busca_exclusao(arvore *raiz, int info, arvore **ex, arvore **pai)
 /*Para a exclusao de um determinado no em uma arvore ABB devemos tratar 3 casos
 1 - Quando o elemento for folha
 2 - Quando o elemento tem 1 filho
-3 - Quando o elemento tem 3 filhos
+3 - Quando o elemento tem 2 filhos
 
 Casos a considerar:
 
@@ -357,10 +357,12 @@ Exclusao do lado direito
 
 void excluir_no_arvore(arvore **raiz, arvore *pai, arvore *e, char lado, int info)
 {
+    arvore *paisub, *sub, *filho;
+    int aux;
     pai = NULL;
     e = NULL;
-    busca_exclusao(raiz, info, &e, &pai);
-    if(!e && !pai)
+    busca_exclusao(*raiz, info, &e, &pai);
+    if(!e)
         printf("Erro ao achar elemento!");
     else
     {
@@ -379,9 +381,77 @@ void excluir_no_arvore(arvore **raiz, arvore *pai, arvore *e, char lado, int inf
                 *raiz = NULL;
             free(e);
         }
-    }
+        else
+        {
+            if(!e->esq || !e->dir) //2 caso de remocao, 1 filho
+            {
+                if(e != pai)
+                {
+                    if(!e->esq)
+                    {
+                        if(e->info < pai->info)
+                            pai->esq = e->dir;
+                        
+                        else
+                            pai->dir = e->dir;
+                    }
+                    else
+                    {
+                        if(e->info < pai->info)
+                            pai->esq = e->esq;
+                        
+                        else
+                            pai->dir = e->esq;
+                    }
+                }
+                else
+                {
+                    if(!e->esq)
+                        *raiz = e->dir;
+                    else
+                        *raiz = e->esq;
+                }
+                free(e);
+                
+            }
+            else // 3 caso de remocao, 2 filhos
+            {
+                if(lado == 'd') // Acha o menor do lado direito
+                {
+                    paisub = e;
+                    sub = e->dir;
 
+                    while(sub->esq != NULL)
+                    {
+                        paisub = sub;
+                        sub = sub->esq;
+                    }
+                }
+                else // Acha o maior do lado esquerdo
+                {
+                    paisub = e;
+                    sub = e->esq;
+
+                    while(sub->dir != NULL)
+                    {
+                        paisub = sub;
+                        sub = sub->dir;
+                    }
+                }
+
+                aux = sub->info;
+
+                // Chamada recursiva para excluir o sucessor ou predecessor
+                excluir_no_arvore(raiz, paisub, sub, lado, aux);
+
+                // Substitui o valor do elemento original
+                e->info = aux;
+            }
+        }
+    }
 }
+
+
 
 
 
