@@ -249,6 +249,119 @@ void imprimir_em_nivel(arvore *raiz)
     }
 }
 
+/*
+Uma Árvore Binária de Busca (ABB) pode ser implementada em disco (arquivo
+binário) ou em um vetor de registros, considerando que cada nó da árvore é um registro de
+um arquivo binário ou vetor
+
+
+Arquivo da árvore
+    esq info dir
+0   4   10  1
+1   2   12  3
+2   0   11  0
+3   0   14  0
+4   5   8   6
+5   0   6   0
+6   0   9   0
+
+
+
+Faça algoritmos para a ABB em disco e também em vetor de registros:
+a) inserir na árvore ABB.
+b) percorrer a árvore ABB em nível ou profundidade.
+c) percorrer a árvore ABB em pré-ordem, in-ordem, pós-ordem de forma recursiva e
+também iterativa.
+d) fazer o algoritmo da exclusão da árvore ABB.
+e) fazer o algoritmo de balanceamento da árvore ABB.
+f) excluir todos os nodos da árvore ABB.
+*/
+
+//a) ideias: Para a insercao eu preciso guardar o pai para atualizar no arquivo e usar fseek baseado no registro
+
+struct RegistroArvore
+{
+    int esq, info, dir;
+};typedef struct RegistroArvore RegAr;
+
+void inserirArvore_disco(int info)
+{
+    int terminou = 0, indicePai=0, igual=0, tamanho=0;
+    RegAr leitura;
+    FILE *Ptrarq = fopen("dados.dat", "rb+");
+    if(!Ptrarq)
+        printf("Erro ao abrir arquivo!");
+    else
+    {
+        while(!feof(Ptrarq) && (!terminou && !igual))
+        {
+            fread(&leitura, sizeof(RegAr), 1, Ptrarq);
+            if(info < leitura.info)
+            {
+                if(leitura.esq != 0)
+                {
+                    fseek(Ptrarq, leitura.esq * sizeof(RegAr), 0);
+                    indicePai = leitura.esq;
+                }
+                else
+                    terminou = 1;
+            }
+            else if(info > leitura.info)
+            {
+                if(leitura.dir != 0)
+                {
+                    fseek(Ptrarq, leitura.dir * sizeof(RegAr), 0);
+                    indicePai = leitura.dir;
+                }
+                else
+                    terminou = 1;
+            }
+            else
+                igual = 1;
+
+        }
+        if(!igual)
+        {
+            //Faz a insercao na posicao correta do arquivo com o indice do pai
+            fseek(Ptrarq, 0, 0);
+            do
+            {
+                fread(&leitura, sizeof(RegAr), 1, Ptrarq);
+                tamanho++;
+
+            } while (!feof(Ptrarq));
+            tamanho -= 1; //Por causa do feof
+            
+            fseek(Ptrarq, indicePai*sizeof(RegAr), 0);
+            fread(&leitura, sizeof(RegAr), 1, Ptrarq);
+            if(info < leitura.info)
+            {
+                leitura.esq = tamanho;
+                fseek(Ptrarq, indicePai*sizeof(RegAr), 0);
+
+                fwrite(&leitura, sizeof(RegAr), 1, Ptrarq);
+                leitura.esq = 0;
+                leitura.dir = 0;
+                leitura.info = info;
+                fseek(Ptrarq, 0, 2);
+                fwrite(&leitura, sizeof(RegAr), 1, Ptrarq);
+            }
+            else
+            {
+                leitura.dir = tamanho;
+                fseek(Ptrarq, indicePai*sizeof(RegAr), 0);
+                fwrite(&leitura, sizeof(RegAr), 1, Ptrarq);
+                leitura.esq = 0;
+                leitura.dir = 0;
+                leitura.info = info;
+                fseek(Ptrarq, 0, 2);
+                fwrite(&leitura, sizeof(RegAr), 1, Ptrarq);
+            }
+
+        }
+    }
+}
+
 
 
 

@@ -163,7 +163,7 @@ void balanceamento(arvore **raiz)
     fila *f;
     initF(&f);
     enqueue(&f, *raiz);
-    while(!isEmpty(f))
+    while(!isEmptyF(f))
     {
         dequeue(&f, &no);
         do
