@@ -87,7 +87,7 @@ void pop(pilha **topo, arvore **removido)
         return 0;
 
     aux = *topo;
-    *removido = aux;
+    *removido = aux->info;
     *topo = aux->prox;
     free(aux);
 }
