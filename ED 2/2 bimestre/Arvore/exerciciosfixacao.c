@@ -137,6 +137,31 @@ void imprimir_zigzag(arvore *raiz)
     }
 }
 
+/*
+Exercício 2 — Encontrar e imprimir o caminho até um elemento na ABB
+
+*/
+
+void imprimir_caminho(arvore *raiz, int valor)
+{
+    int igual = 0;
+    while(raiz && raiz->info != valor && !igual)
+    {
+        printf("%d -> ", raiz->info);
+        if(valor < raiz->info)
+            raiz = raiz->esq;
+        else if(valor > raiz->info)
+            raiz = raiz->dir;
+        else
+            igual = 1;
+    }
+
+    if(!igual && raiz)
+        printf("%d\n", raiz->info);
+}
+
+
+
 int main(void)
 {
     arvore *raiz;
@@ -152,5 +177,6 @@ int main(void)
     insereABB(&raiz, 25);
     insereABB(&raiz, 65);
     imprimir_zigzag(raiz);
+    imprimir_caminho(raiz, 65);
     return 0;
 }
