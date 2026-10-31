@@ -227,7 +227,7 @@ void busca_exclusao(arvore *raiz, int info, arvore **ex, arvore **pai)
             raiz = raiz->dir;
     }
     if(!raiz)
-        pai = NULL;
+        *pai = NULL;
     *ex = raiz;
 }
 
@@ -363,6 +363,7 @@ void perfeitamente_balanceada(arvore **raiz)
                     excluir_no_arvore(&*raiz, pai, e, 'e', aux);
                 else
                     excluir_no_arvore(&*raiz, pai, e, 'd', aux);
+                insereABB(&*raiz, aux);
             }
             
         } while (FB < -1 || FB > 1);
@@ -393,6 +394,9 @@ int main(void)
     insereABB(&raiz, 25);
     insereABB(&raiz, 65);
     imprimir_zigzag(raiz);
-    imprimir_caminho(raiz, 65);
+    imprimir_caminho(raiz, 10);
+    perfeitamente_balanceada(&raiz);
+    imprimir_caminho(raiz, 10);
+    imprimir_caminho(raiz, 30);
     return 0;
 }
