@@ -160,6 +160,53 @@ void imprimir_caminho(arvore *raiz, int valor)
         printf("%d\n", raiz->info);
 }
 
+/*
+Transformar uma arvore binaria em uma lista duplamente encadeada, seguindo em nivel
+*/
+
+
+
+struct arvore_encadeada
+{
+    struct arvore_encadeada *esq, *dir;
+    int info;
+};typedef struct arvore_encadeada aren;
+
+//Como ele nao pede valor dos niveis, nao preciso guardar isso, entao eh so percorrer utilizando uma fila normalmente
+
+void Tree_to_list(aren **inicio, arvore *raiz)
+{
+    arvore *atual, *ant;
+    //Percorre em filas
+    fila *f;
+    initF(&f);
+    if(raiz)
+        enqueue(&f, raiz);
+    *inicio = NULL;
+    ant = NULL;
+    while(!isEmptyF(f))
+    {
+        dequeue(&f, &atual);
+        
+        if(atual->esq)
+            enqueue(&f, atual->esq);
+        if(atual->dir)
+            enqueue(&f, atual->dir);
+
+        //Ligacoes
+        atual->esq = ant;
+        atual->dir = NULL;
+
+        if(ant)
+            ant->dir = atual;
+        else
+            *inicio = atual;
+        ant = atual;
+    }
+}
+
+
+
 
 
 int main(void)
