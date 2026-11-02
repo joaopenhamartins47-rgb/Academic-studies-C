@@ -391,7 +391,7 @@ struct arvore_em_disco
 
 void criar_arq(FILE *Ptrarq)
 {
-    Ptrarq = fopen(Ptrarq, "wb");
+    Ptrarq = fopen("dados.dat", "wb");
     printf("Arquivo criado com sucesso!\n");
     fclose(Ptrarq);
 
