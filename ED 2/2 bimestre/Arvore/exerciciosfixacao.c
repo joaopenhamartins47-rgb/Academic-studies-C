@@ -375,9 +375,118 @@ void perfeitamente_balanceada(arvore **raiz)
     }
 }
 
+/*
+Arvore ABB implementada em disco, quando nao se tem filhos, eh representado no disco -1
+
+//Implantar insercao em disco
+//Exibir as informacoes em disco em nivel
+//Excluir um nodo da arvore binaria
+*/
+
+struct arvore_em_disco
+{
+    int info, esq, dir;
+};typedef struct arvore_em_disco disco;
 
 
+void criar_arq(FILE *Ptrarq)
+{
+    Ptrarq = fopen(Ptrarq, "wb");
+    printf("Arquivo criado com sucesso!\n");
+    fclose(Ptrarq);
 
+}
+
+void inserirABB_disco(int info)
+{
+    //Insercao no final do disco, verificar se eh -1
+    FILE *Ptrarq = fopen("dados.dat", "rb+");
+    int achou = 0, igual=0;
+    disco dados, leitura;
+    dados.info = info;
+    dados.esq = -1;
+    dados.dir = -1;
+    long pos_pai, pos_final;
+    if(!Ptrarq)
+        printf("Erro ao abrir arquivo!\n");
+    else
+    {
+        fseek(Ptrarq, 0, 2);
+        long tamanho = ftell(Ptrarq);
+
+        if(tamanho == 0) //Primeiro caso de insercao 
+        {
+            fwrite(&dados, sizeof(disco), 1, Ptrarq);
+        }
+        else
+        {
+            fseek(Ptrarq, 0, 0);
+            while(!feof(Ptrarq) && !achou && !igual)
+            {
+                fread(&leitura, sizeof(disco), 1, Ptrarq);
+                if(info < leitura.info)
+                {
+                    if(leitura.esq == -1)
+                    {
+                        fseek(Ptrarq, -sizeof(disco), 1);
+                        pos_pai = ftell(Ptrarq); //Retorna a posicao em bytes
+
+                        pos_pai /= sizeof(disco); //Registra a posicao 
+
+                        fseek(Ptrarq, 0, 2);
+                        pos_final = ftell(Ptrarq);
+                        pos_final /= sizeof(disco);
+
+                        //Adicionar no pai
+                        fseek(Ptrarq, pos_pai*sizeof(disco), 0);
+                        leitura.esq = pos_final;
+                        fwrite(&leitura, sizeof(disco), 1, Ptrarq);
+
+                        //Adicionar no filho
+                        fseek(Ptrarq, 0, 2);
+                        fwrite(&dados, sizeof(disco), 1, Ptrarq);
+                        achou = 1;
+                    }
+                    else
+                    {
+                        fseek(Ptrarq, leitura.esq*sizeof(disco), 0);
+                    }
+                }
+                else if(info > leitura.info)
+                {
+                    if(leitura.dir == -1)
+                    {
+                        fseek(Ptrarq, -sizeof(disco), 1);
+                        pos_pai = ftell(Ptrarq); //Retorna a posicao em bytes
+
+                        pos_pai /= sizeof(disco); //Registra a posicao 
+
+                        fseek(Ptrarq, 0, 2);
+                        pos_final = ftell(Ptrarq);
+                        pos_final /= sizeof(disco);
+
+                        //Adicionar no pai
+                        fseek(Ptrarq, pos_pai*sizeof(disco), 0);
+                        leitura.dir = pos_final;
+                        fwrite(&leitura, sizeof(disco), 1, Ptrarq);
+
+                        //Adicionar no filho
+                        fseek(Ptrarq, 0, 2);
+                        fwrite(&dados, sizeof(disco), 1, Ptrarq);
+                        achou = 1;
+                    }
+                    else
+                        fseek(Ptrarq, leitura.dir*sizeof(disco), 0);
+                    
+                }
+                else
+                    igual = 1;
+            }
+        }
+        fclose(Ptrarq);
+    }
+
+}
 
 int main(void)
 {
