@@ -97,3 +97,59 @@ char isEmpty(pilha *topo)
     return topo == NULL;
 }
 
+struct NoFila
+{
+    int valor;
+    struct NoFila *seguinte;
+};
+typedef struct NoFila filaInt;
+
+void inicializarFila(filaInt **f)
+{
+    *f = NULL;
+}
+
+void inserirFila(filaInt **f, int valor)
+{
+    filaInt *novo, *aux;
+
+    novo = (filaInt*) malloc(sizeof(filaInt));
+
+    novo->valor = valor;
+    novo->seguinte = NULL;
+
+    if (*f == NULL)
+        *f = novo;
+    else
+    {
+        aux = *f;
+
+        while (aux->seguinte != NULL)
+            aux = aux->seguinte;
+
+        aux->seguinte = novo;
+    }
+}
+
+int removerFila(filaInt **f, int *valor)
+{
+    filaInt *aux;
+
+    if (*f == NULL)
+        return 0;
+
+    aux = *f;
+    *valor = aux->valor;
+
+    *f = aux->seguinte;
+
+    free(aux);
+
+    return 1;
+}
+
+int filaVazia(filaInt *f)
+{
+    return f == NULL;
+}
+

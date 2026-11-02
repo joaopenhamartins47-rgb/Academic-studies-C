@@ -485,27 +485,65 @@ void inserirABB_disco(int info)
         }
         fclose(Ptrarq);
     }
+}
 
+
+//Exibicao em niveis
+
+//Ideias: Pra exibir em nivel eu vou utilizar uma fila que guarda o valor do numero inteiro se for diferente de -1
+
+void exibir_em_nivel_em_disco()
+{
+    int tamanho, valor;
+    filaInt *f;
+    disco dados;
+    inicializarFila(&f);
+    FILE *Ptrarq = fopen("dados.dat", "rb");
+    if(!Ptrarq)
+        printf("Erro ao abrir arquivo!\n");
+    else
+    {
+        fseek(Ptrarq, 0, 2);
+        tamanho = ftell(Ptrarq);
+        if(tamanho == 0)
+            printf("Nao ha elementos para exibir!\n");
+        else
+        {
+            rewind(Ptrarq);
+            fread(&dados, sizeof(disco), 1, Ptrarq);
+            if(dados.esq != -1)
+                inserirFila(&f, dados.esq);
+            if(dados.dir != -1)
+                inserirFila(&f, dados.dir);
+            printf("%d ->", dados.info);
+            while(!filaVazia(f))
+            {
+                removerFila(&f, &valor);
+                fseek(Ptrarq, valor*sizeof(disco), 0);
+                fread(&dados, sizeof(disco), 1, Ptrarq);
+                printf("%d ->", dados.info);
+                if(dados.esq != -1)
+                    inserirFila(&f, dados.esq);
+                if(dados.dir != -1)
+                    inserirFila(&f, dados.dir);
+            }
+        }
+        fclose(Ptrarq);
+    }
 }
 
 int main(void)
 {
     arvore *raiz;
     raiz = NULL;
-    insereABB(&raiz, 50);
-    insereABB(&raiz, 30);
-    insereABB(&raiz, 70);
-    insereABB(&raiz, 20);
-    insereABB(&raiz, 40);
-    insereABB(&raiz, 60);
-    insereABB(&raiz, 80);
-    insereABB(&raiz, 10);
-    insereABB(&raiz, 25);
-    insereABB(&raiz, 65);
-    imprimir_zigzag(raiz);
-    imprimir_caminho(raiz, 10);
-    perfeitamente_balanceada(&raiz);
-    imprimir_caminho(raiz, 10);
-    imprimir_caminho(raiz, 30);
+    FILE *Ptrarq;
+    criar_arq(Ptrarq);
+    inserirABB_disco(10);
+    inserirABB_disco(12);
+    inserirABB_disco(14);
+    inserirABB_disco(8);
+    inserirABB_disco(6);
+    inserirABB_disco(9);
+    exibir_em_nivel_em_disco();
     return 0;
 }
