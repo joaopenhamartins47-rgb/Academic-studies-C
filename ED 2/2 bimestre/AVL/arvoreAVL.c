@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include "TADarvore.h"
 
 struct tree
 {
@@ -42,6 +43,86 @@ void rotacao_direita(Tree **P)
     Q->dir = *P;
     (*P)->esq = temp;
     *P = Q;
+}
+
+
+//altura = max(esq,dir)+1
+
+int altura(Tree *raiz)
+{
+    int esq, dir;
+
+    if(raiz)
+    {
+        esq = altura(raiz->esq);
+        dir = altura(raiz->dir);
+
+        if(esq > dir)
+            return esq + 1;
+        else
+            return dir + 1;
+    }
+    return 0;
+}
+
+//Pai negativo, olha o filho da esquerda
+//Pai positivo, olha o filho da direita
+//Filho positivo, rotaciona a esquerda
+//Filho negativo, rotaciona a direita
+//Se sao sinais diferentes, rotaciona o filho e depois o pai
+
+void insereAVL(Tree **raiz, int info, char *flag)
+{
+    //A ideia aqui eh inserir normalmente e depois rotacionar de acordo com as regras de rotacao
+    int FB, FB_filho;
+    //Recursividade
+    if(!*raiz)
+    {
+        *raiz = criaNo(info);
+        *flag = 1;
+    }
+    else if(info < (*raiz)->info)
+        insereAVL(&(*raiz)->esq, info, &*flag);
+    else 
+        insereAVL(&(*raiz)->dir, info, &*flag);
+
+    //Se ja foi inserido, faz os casos de balanceamento da AVL
+    if(*flag == 1)
+    {
+        FB = altura((*raiz)->dir) - altura((*raiz)->esq);
+
+        if(FB == 2)
+        {
+            *flag = 0;
+            
+            FB_filho = altura((*raiz)->dir->dir) - altura((*raiz)->dir->esq);
+
+            if(FB_filho == 1)
+                rotacao_esq(&*raiz);
+
+            else //Quer dizer que eh negativo, entao rotaciona os 2
+            {
+                rotacao_direita(&(*raiz)->dir); //Primeiro rotaciona o filho
+                rotacao_esq(&*raiz);
+            }
+            
+        }
+        else if(FB == -2)
+        {
+            *flag = 0;
+            
+            FB_filho = altura((*raiz)->esq->dir) - altura((*raiz)->esq->esq);
+
+            if(FB_filho == -1)
+                rotacao_direita(&*raiz);
+
+            else //Caso pai -2 filho 1
+            {
+                rotacao_esq(&(*raiz)->esq); //Rotaciona o filho
+                rotacao_direita(&*raiz);
+            }
+        }
+    }
 }
 
 int main(void)
