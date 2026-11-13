@@ -83,13 +83,15 @@ void pop(pilha **topo, arvore **removido)
 {
     pilha *aux;
 
-    if(*topo == NULL)
-        return 0;
+    if(*topo)
+    {
+        aux = *topo;
+        *removido = aux->info;
+        *topo = aux->prox;
+        free(aux);
+    }
 
-    aux = *topo;
-    *removido = aux->info;
-    *topo = aux->prox;
-    free(aux);
+    
 }
 
 char isEmpty(pilha *topo)

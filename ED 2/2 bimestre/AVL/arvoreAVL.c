@@ -2,11 +2,7 @@
 #include <stdlib.h>
 #include "TADarvore.h"
 
-struct tree
-{
-    struct tree *esq, *dir;
-    int info;
-};typedef struct tree Tree;
+typedef arvore Tree;
 
 
 Tree *criaNo(int info)
@@ -128,7 +124,98 @@ void insereAVL(Tree **raiz, int info, char *flag)
 }
 
 //Insercao AVL iterativa
+void insere_AVL_iterativo(Tree **raiz, int info, char *flag)
+{
+    int FB, FB_filho;
+    pilha *p;
+    Tree *aux, *pai;
+    *flag = 0;
+    aux = *raiz;
+    init(&p);
+    if(!*raiz)
+    {
+        *raiz = criaNo(info);
+        *flag = 1;
+    }
+    else
+    {
+        while(aux && !*flag)
+        {
+            push(&p, aux);
+            if(info < (aux)->info)
+            {
+                if(!aux->esq)
+                {
+                    aux->esq = criaNo(info);
+                    *flag = 1;
+                }
+                else
+                    aux = aux->esq;
+            }
+    
+            else
+            {
+                if(!aux->dir)
+                {
+                    aux->dir = criaNo(info);
+                    *flag = 1;
+                }
+                else
+                    aux = aux->dir;
+            }
+        }
+    }
+    if(*flag == 1)
+    {
+        while(!isEmpty(p) && *flag)
+        {
+            pop(&p, &aux);
+            FB = altura(aux->dir) - altura(aux->esq);
 
+            if(FB == 2 || FB == -2)
+            {
+                if(FB == 2)
+                {
+                    FB_filho = altura(aux->dir->dir) - altura(aux->dir->esq);
+
+                    if(FB_filho == 1)
+                        rotacao_esq(&aux);
+                    else
+                    {
+                        rotacao_direita(&aux->dir);
+                        rotacao_esq(&aux);
+                    }
+                }
+                else
+                {
+                    FB_filho = altura(aux->esq->dir) - altura(aux->esq->esq);
+
+                    if(FB_filho == -1)
+                        rotacao_direita(&aux);
+                    else //sinais diferentes
+                    {
+                        rotacao_esq(&aux->esq);
+                        rotacao_direita(&aux);
+                    }
+                }
+
+                if(isEmpty(p))
+                    *raiz = aux;
+                else
+                {
+                    pop(&p, &pai);
+                    if(info < pai->info)
+                        pai->esq = aux;
+                    else
+                        pai->dir = aux;
+                }
+                *flag = 0;
+            }
+        }
+    }
+    while(!isEmpty(p))
+        pop(&p, &aux);
+}
 
 
 
