@@ -174,34 +174,36 @@ struct arvore_encadeada
 
 //Como ele nao pede valor dos niveis, nao preciso guardar isso, entao eh so percorrer utilizando uma fila normalmente
 
-void Tree_to_list(aren **inicio, arvore *raiz)
+void Tree_to_list(arvore **inicio, arvore *raiz)
 {
-    arvore *atual, *ant;
-    //Percorre em filas
+    arvore *atual;
     fila *f;
+
     initF(&f);
-    if(raiz)
-        enqueue(&f, raiz);
     *inicio = NULL;
-    ant = NULL;
-    while(!isEmptyF(f))
+
+    if (raiz)
+        enqueue(&f, raiz);
+
+    while (!isEmptyF(f))
     {
         dequeue(&f, &atual);
-        
-        if(atual->esq)
+
+        // Guarda os filhos antes de alterar as ligacoes
+        if (atual->esq)
             enqueue(&f, atual->esq);
-        if(atual->dir)
+
+        if (atual->dir)
             enqueue(&f, atual->dir);
 
-        //Ligacoes
-        atual->esq = ant;
-        atual->dir = NULL;
+        // Insere o no no inicio da lista
+        atual->esq = NULL;
+        atual->dir = *inicio;
 
-        if(ant)
-            ant->dir = atual;
-        else
-            *inicio = atual;
-        ant = atual;
+        if (*inicio)
+            (*inicio)->esq = atual;
+
+        *inicio = atual;
     }
 }
 
@@ -531,6 +533,10 @@ void exibir_em_nivel_em_disco()
         fclose(Ptrarq);
     }
 }
+
+
+
+
 
 int main(void)
 {
