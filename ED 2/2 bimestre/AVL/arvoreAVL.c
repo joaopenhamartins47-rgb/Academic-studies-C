@@ -127,6 +127,41 @@ void insereAVL(Tree **raiz, int info, char *flag)
     }
 }
 
+//Insercao AVL iterativa
+
+
+
+
+//Exercicio AVL: Conta folhas
+int conta_folhas_AVL(Tree *raiz)
+{
+    if(raiz)
+    {
+        if(!raiz->esq && !raiz->dir)
+            return 1;
+        return conta_folhas_AVL(raiz->esq) + conta_folhas_AVL(raiz->dir);
+    }
+    return 0;
+}
+
+//Exercicio AVL: Achar maior elemento
+int maior_elemento(Tree *raiz)
+{
+    if (!raiz)
+    {
+        printf("Arvore vazia!\n");
+        return 0;
+    }
+
+    while (raiz->dir) 
+        raiz = raiz->dir;
+    
+
+    return raiz->info;
+}
+
+
+
 int main(void)
 {
     return 0;
