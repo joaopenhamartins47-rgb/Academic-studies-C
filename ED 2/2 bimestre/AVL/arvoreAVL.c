@@ -65,6 +65,8 @@ int altura(Tree *raiz)
     return 0;
 }
 
+
+
 //Pai negativo, olha o filho da esquerda
 //Pai positivo, olha o filho da direita
 //Filho positivo, rotaciona a esquerda
