@@ -61,6 +61,41 @@ int altura(Tree *raiz)
     return 0;
 }
 
+//Conta a altura por niveis usando fila
+int altura_iterativa(Tree *raiz)
+{
+    int h = 0;
+    fila *f;
+    Tree *aux;
+
+    initF(&f);
+    if(raiz)
+    {
+        enqueue(&f, raiz);
+        enqueue(&f, NULL); //Marca o fim do nivel
+
+        while(!isEmptyF(f))
+        {
+            dequeue(&f, &aux);
+            if(aux)
+            {
+                if(aux->esq)
+                    enqueue(&f, aux->esq);
+                if(aux->dir)
+                    enqueue(&f, aux->dir);
+            }
+            else
+            {
+                h++;
+                if(!isEmptyF(f))
+                    enqueue(&f, NULL);
+            }
+        }
+    }
+
+    return h;
+}
+
 
 
 //Pai negativo, olha o filho da esquerda
