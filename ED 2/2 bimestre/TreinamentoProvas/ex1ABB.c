@@ -40,6 +40,47 @@ void percorrer_em_nivel(Tree *raiz)
     }
 }
 
+//Transformar uma arvore em lista encadeada no percurso em nivel so alterando os nos
+
+void Tree_to_listlevel(Tree *inicio)
+{
+    int primeiro=0;
+    fila *f;
+    initF(&f);
+    Tree *aux = inicio;
+    Tree *ant = NULL;
+    enqueue(&f, aux);
+    while(!isEmptyF(f))
+    {
+        dequeue(&f, &aux);
+        if(aux->esq)
+            enqueue(&f, aux->esq);
+        if(aux->dir)
+            enqueue(&f, aux->dir);
+
+        if(ant)
+            ant->dir = aux;
+
+        aux->esq = ant;
+        aux->dir = NULL;
+
+        ant = aux;
+        
+    }
+}
+
+//Algoritmo de arvore perfeitamente balanceada nao recursivo
+
+
+
+
+
+
+
+
+//Arvore AVL em disco, verificar se eh AVL ou nao em todos os nos e fazer a exclusao em disco
+
+
 
 
 int main(void)
