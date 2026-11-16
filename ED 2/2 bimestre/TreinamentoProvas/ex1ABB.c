@@ -204,6 +204,101 @@ void inserir_ABB_disco(int info)
 }
 /*
 b) percorrer a árvore ABB em nível ou profundidade.
+
+*/
+//TAD temporario de fila dinamica de inteiros para a ABB em disco
+struct FilaDisco
+{
+    int info;
+    struct FilaDisco *prox;
+};typedef struct FilaDisco filaDisco;
+
+void initFD(filaDisco **f)
+{
+    *f = NULL;
+}
+
+void enqueueD(filaDisco **f, int info)
+{
+    filaDisco *novo, *aux;
+
+    novo = malloc(sizeof(filaDisco));
+    if(novo)
+    {
+        novo->info = info;
+        novo->prox = NULL;
+
+        if(*f == NULL)
+            *f = novo;
+        else
+        {
+            aux = *f;
+            while(aux->prox)
+                aux = aux->prox;
+            aux->prox = novo;
+        }
+    }
+}
+
+void dequeueD(filaDisco **f, int *info)
+{
+    filaDisco *aux;
+
+    if(*f)
+    {
+        aux = *f;
+        *info = aux->info;
+        *f = aux->prox;
+        free(aux);
+    }
+}
+
+int isEmptyFD(filaDisco *f)
+{
+    return f == NULL;
+}
+
+void percorrer_ABB_disco()
+{
+    FILE *Ptrarq = fopen("dados.dat", "rb");
+    filaDisco *f;
+    int pos;
+    initFD(&f);
+    if(!Ptrarq)
+        printf("Erro ao abrir arquivo!\n");
+    else
+    {
+        regarq dados;
+        int tam = tamanho(Ptrarq);
+        fseek(Ptrarq, 0, 0);
+        if(tam != 0)
+        {
+            fread(&dados, sizeof(regarq), 1, Ptrarq);
+            if(dados.esq != 0)
+                enqueueD(&f, dados.esq);
+            if(dados.dir != 0)
+                enqueueD(&f, dados.dir);
+            printf("%d ", dados.info);
+            while(!isEmptyFD(f))
+            {
+                dequeueD(&f, &pos);
+                fseek(Ptrarq, pos*sizeof(regarq), 0);
+                fread(&dados, sizeof(regarq), 1, Ptrarq);
+                printf("%d ", dados.info);
+
+                if(dados.esq != 0)
+                    enqueueD(&f, dados.esq);
+                
+                if(dados.dir != 0)
+                    enqueueD(&f, dados.dir);
+                
+            }
+        }
+        fclose(Ptrarq);
+    }
+}
+/*
+
 c) percorrer a árvore ABB em pré-ordem, in-ordem, pós-ordem de forma recursiva e
 também iterativa.
 d) fazer o algoritmo da exclusão da árvore ABB.
