@@ -388,6 +388,59 @@ void ABB_preordem_disco()
         
     }
 }
+
+void ABB_emordem_disco()
+{
+    //Percorre a esquerda, visita o no e depois percorre a direita
+    pilhaDisco *p;
+    int tam, pos;
+    initPD(&p);
+    FILE *Ptrarq = fopen("dados.dat", "rb");
+    regarq dados;
+    if(!Ptrarq)
+        printf("Erro ao abrir arquivo!\n");
+    else
+    {
+        tam = tamanho(Ptrarq);
+        fseek(Ptrarq, 0, 0);
+        if(tam == 0)
+            printf("Arquivo vazio!\n");
+        else
+        {
+            pos = 0;
+            while(pos != -1 || !isEmptyPD(p))
+            {
+                //Guarda a posicao do no atual e desce para a esquerda
+                while(pos != -1)
+                {
+                    pushD(&p, pos);
+                    fseek(Ptrarq, pos*sizeof(regarq), 0);
+                    fread(&dados, sizeof(regarq), 1, Ptrarq);
+
+                    if(dados.esq != 0)
+                        pos = dados.esq;
+                    else
+                        pos = -1;
+                }
+
+                //Volta ao no que estava esperando na pilha
+                popD(&p, &pos);
+                fseek(Ptrarq, pos*sizeof(regarq), 0);
+                fread(&dados, sizeof(regarq), 1, Ptrarq);
+
+                printf("%d ", dados.info);
+
+                if(dados.dir != 0)
+                    pos = dados.dir;
+                else
+                    pos = -1;
+            }
+        }
+        fclose(Ptrarq);
+
+    }
+}
+
 /*
 d) fazer o algoritmo da exclusão da árvore ABB.
 e) fazer o algoritmo de balanceamento da árvore ABB.
@@ -399,7 +452,7 @@ f) excluir todos os nodos da árvore ABB.
 
 Ate agora vou dividir os conhecimentos em chunks
 
-1 - Percorrer arvore em nivel sabendo o nivel e contando, utiliza o algoritmo que guarda NULL sempre que empilhar 
+1 - Percorrer arvore em nivel sabendo o nivel e contando, utiliza o algoritmo que guarda NULL sempre que empilhar
 2 - Transformar arvore em disco, usando fseek e percorrendo
 3 - Balanceamento de arvore AVL, exclusao e balanceamento de arvore ABB usando FB e FB_filho se necessario
 
