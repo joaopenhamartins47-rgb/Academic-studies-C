@@ -204,7 +204,6 @@ void inserir_ABB_disco(int info)
 }
 /*
 b) percorrer a árvore ABB em nível ou profundidade.
-
 */
 //TAD temporario de fila dinamica de inteiros para a ABB em disco
 struct FilaDisco
@@ -301,6 +300,95 @@ void percorrer_ABB_disco()
 
 c) percorrer a árvore ABB em pré-ordem, in-ordem, pós-ordem de forma recursiva e
 também iterativa.
+
+*/
+//TAD temporario de pilha dinamica de inteiros para a ABB em disco
+struct PilhaDisco
+{
+    int info;
+    struct PilhaDisco *prox;
+};typedef struct PilhaDisco pilhaDisco;
+
+void initPD(pilhaDisco **p)
+{
+    *p = NULL;
+}
+
+void pushD(pilhaDisco **topo, int info)
+{
+    pilhaDisco *novo = malloc(sizeof(pilhaDisco));
+
+    if(novo)
+    {
+        novo->info = info;
+        novo->prox = *topo;
+        *topo = novo;
+    }
+}
+
+void popD(pilhaDisco **topo, int *info)
+{
+    pilhaDisco *aux;
+
+    if(*topo)
+    {
+        aux = *topo;
+        *info = aux->info;
+        *topo = aux->prox;
+        free(aux);
+    }
+}
+
+int isEmptyPD(pilhaDisco *topo)
+{
+    return topo == NULL;
+}
+
+void ABB_preordem_disco()
+{
+    //O pre ordem faz uma busca andando todos a esquerda e depois verifica se tem um na direita quando a esquerda eh vazia, ou usa-se uma pilha que guarda sempre o da direita e depois o da esquerda, vou fazer do segundo jeito
+    pilhaDisco *p;
+    int tam, pos;
+    initPD(&p);
+    FILE *Ptrarq = fopen("dados.dat", "rb");
+    regarq dados;
+    if(!Ptrarq)
+        printf("Erro ao abrir arquivo!\n");
+    else
+    {
+        tam = tamanho(Ptrarq);
+        fseek(Ptrarq, 0, 0);
+        if(tam == 0)
+            printf("Arquivo vazio!\n");
+        else
+        {
+            fread(&dados, sizeof(regarq), 1, Ptrarq);
+            if(dados.dir != 0)
+                pushD(&p, dados.dir);
+            if(dados.esq != 0)
+                pushD(&p, dados.esq);
+                
+            printf("%d ", dados.info);
+            while(!isEmptyPD(p))
+            {
+                popD(&p, &pos);
+
+                fseek(Ptrarq, pos*sizeof(regarq), 0);
+                fread(&dados, sizeof(regarq), 1, Ptrarq);
+
+                printf("%d ", dados.info);
+
+                if(dados.dir != 0)
+                    pushD(&p, dados.dir);
+                if(dados.esq != 0)
+                    pushD(&p, dados.esq);
+            }
+        }
+        fclose(Ptrarq);
+        
+    }
+}
+/*
 d) fazer o algoritmo da exclusão da árvore ABB.
 e) fazer o algoritmo de balanceamento da árvore ABB.
 f) excluir todos os nodos da árvore ABB.
