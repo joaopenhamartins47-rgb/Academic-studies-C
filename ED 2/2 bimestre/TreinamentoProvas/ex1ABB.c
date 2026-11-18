@@ -623,6 +623,225 @@ void exclusao_ABB_disco(int info)
 
 
 e) fazer o algoritmo de balanceamento da árvore ABB.
+*/
+
+void excluir_no_arvore(arvore **raiz, arvore *pai, arvore *e, char lado, int info)
+{
+    arvore *paisub, *sub, *filho;
+    int aux;
+    pai = NULL;
+    e = NULL;
+    busca_exclusao(*raiz, info, &e, &pai);
+    if(!e)
+        printf("Erro ao achar elemento!");
+    else
+    {
+        //Primeiro caso de remocao, se o elemento for folha
+        if(!e->esq && !e->dir)
+        {
+            //4 casos a considerar, se for raiz ou nao e se for remover da esquerda ou da direita
+            if(e != pai)// 1
+            {
+                if(e->info < pai->info) //2
+                    pai->esq = NULL; //Corta a conexao
+                else //3
+                    pai->dir = NULL;
+            }
+            else //4
+                *raiz = NULL;
+            free(e);
+        }
+        else
+        {
+            if(!e->esq || !e->dir) //2 caso de remocao, 1 filho
+            {
+                if(e != pai)
+                {
+                    if(!e->esq)
+                    {
+                        if(e->info < pai->info)
+                            pai->esq = e->dir;
+                        
+                        else
+                            pai->dir = e->dir;
+                    }
+                    else
+                    {
+                        if(e->info < pai->info)
+                            pai->esq = e->esq;
+                        
+                        else
+                            pai->dir = e->esq;
+                    }
+                }
+                else
+                {
+                    if(!e->esq)
+                        *raiz = e->dir;
+                    else
+                        *raiz = e->esq;
+                }
+                free(e);
+                
+            }
+            else // 3 caso de remocao, 2 filhos
+            {
+                if(lado == 'd') // Acha o menor do lado direito
+                {
+                    paisub = e;
+                    sub = e->dir;
+
+                    while(sub->esq != NULL)
+                    {
+                        paisub = sub;
+                        sub = sub->esq;
+                    }
+                }
+                else // Acha o maior do lado esquerdo
+                {
+                    paisub = e;
+                    sub = e->esq;
+
+                    while(sub->dir != NULL)
+                    {
+                        paisub = sub;
+                        sub = sub->dir;
+                    }
+                }
+
+                aux = sub->info;
+
+                // Chamada recursiva para excluir o sucessor ou predecessor
+                excluir_no_arvore(raiz, paisub, sub, lado, aux);
+
+                // Substitui o valor do elemento original
+                e->info = aux;
+            }
+        }
+    }
+}
+
+int contar_nos(Tree *raiz)
+{
+    if(raiz)
+    {
+        return 1+ contar_nos(raiz->esq) + contar_nos(raiz->dir);
+    }
+    return 0;
+}
+
+void busca_exclusao(arvore *raiz, int info, arvore **ex, arvore **pai)
+{
+    *pai = raiz;
+    while(raiz && raiz->info != info)
+    {
+        *pai = raiz;
+        if(info < raiz->info)
+            raiz = raiz->esq;
+        else
+            raiz = raiz->dir;
+    }
+    if(!raiz)
+        pai = NULL;
+    *ex = raiz;
+}
+
+void insereABB(arvore **raiz, int info)
+{
+    arvore *aux;
+    int achou = 0;
+    if(!*raiz)
+        *raiz = criaNo(info);
+    else
+    {
+        aux = *raiz;
+        while(!achou)
+        {
+            if(info < aux->info)
+                if(!aux->esq)
+                {
+                    aux->esq = criaNo(info);
+                    achou = 1;
+                }
+                else
+                    aux = aux->esq;
+            else
+                if(!aux->dir)
+                {
+                    aux->dir = criaNo(info);
+                    achou = 1;
+                }
+                else
+                    aux = aux->dir;
+        }
+    }
+}
+
+void balanceamento_perfeito_ABB(Tree **raiz) //sem ser disco
+{
+    //A ideia do algoritmo de balanceamento eh contar os nos da direita subtraindo com o da esquerda, se sair do range -1 0 1, precisa de balancemento
+
+    //Para o balanceamento, precisamos verificar todos os niveis da arvore, utilizando uma fila
+
+    //Copiamos o valor que precisaremos recolocar na arvore
+
+    //Iremos avancando na arvore normalmente, se tiver filho na esquerda ou na direita
+
+    //Busca a exclusao
+    
+    //Faz a exclusao e reinsere 
+
+
+    int FB, qtdeE, qtdeD, aux;
+    Tree *no = *raiz, *ex, *pai;
+    fila *f;
+    initF(&f);
+    enqueue(&f, no);
+
+    while(!isEmptyF(f))
+    {
+        dequeue(&f, &no);
+        do
+        {
+            qtdeD = qtdeE = FB = 0;
+            qtdeD = contar_nos(no->dir);
+            qtdeE = contar_nos(no->esq);
+
+            FB = qtdeD - qtdeE;
+
+            if(FB < -1 || FB > 1)
+            {
+                aux = no->info;
+
+                //Avanca
+
+                if(!no->esq)
+                    no = no->dir;
+                else if(!no->dir)
+                    no = no->esq;
+
+                //Faz a busca, exclui e insere
+                busca_exclusao(no, aux, &ex, &pai);
+
+                if(FB < 0) //Exclui do lado esquerdo
+                    excluir_no_arvore(&*raiz, pai, ex, 'e', aux);
+                else
+                    excluir_no_arvore(&*raiz, pai, ex, 'd', aux);
+
+                insereABB(&*raiz, aux);
+            }
+
+        } while (FB < -1 || FB > 1);
+        
+        if(no->esq)
+            enqueue(&f, no->esq);
+        if(no->dir)
+            enqueue(&f, no->dir);
+    }
+} 
+
+
+/*
 f) excluir todos os nodos da árvore ABB.
 */
 
