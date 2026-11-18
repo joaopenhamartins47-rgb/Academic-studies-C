@@ -257,6 +257,49 @@ int isEmptyFD(filaDisco *f)
     return f == NULL;
 }
 
+int altura_disco(FILE *Ptrarq, int pos)
+{
+    //Aqui vou usar a ideia de guardar o NULL e acrescentar a altura
+    regarq dados;
+    int h = 0, valor;
+    filaDisco *f;
+    initFD(&f);
+    fseek(Ptrarq, pos*sizeof(regarq), 0);
+    fread(&dados, sizeof(regarq), 1, Ptrarq);
+    if(!feof(Ptrarq))
+    {
+        h=1;
+        if(dados.esq != 0)
+            enqueueD(&f, dados.esq);
+        if(dados.dir != 0)
+            enqueueD(&f, dados.dir);
+        if(!isEmptyFD(f))
+            enqueueD(&f, 0);
+
+        while(!isEmptyFD(f))
+        {
+            dequeueD(&f, &valor);
+            if(valor != 0)
+            {
+                fseek(Ptrarq, valor*sizeof(regarq), 0);
+                fread(&dados, sizeof(regarq), 1, Ptrarq);
+                if(dados.esq != 0)
+                    enqueueD(&f, dados.esq);
+                if(dados.dir != 0)
+                    enqueueD(&f, dados.dir);
+            }
+            else
+            {
+                h++;
+                if(!isEmptyFD(f))
+                    enqueueD(&f, 0);
+            }
+        }
+    }
+
+    return h;
+}
+
 void percorrer_ABB_disco()
 {
     FILE *Ptrarq = fopen("dados.dat", "rb");
