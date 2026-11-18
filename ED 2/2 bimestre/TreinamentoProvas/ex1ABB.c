@@ -7,6 +7,11 @@
 //Funcao pra exibir a arvore em nivel
 typedef arvore Tree;
 
+struct regArquivo
+{
+    int esq, info, dir;
+};typedef struct regArquivo regarq;
+
 
 //Funcao contando o nivel
 
@@ -69,16 +74,124 @@ void Tree_to_listlevel(Tree *inicio)
     }
 }
 
-//Algoritmo de arvore perfeitamente balanceada nao recursivo
-
-
-
-
-
-
-
-
 //Arvore AVL em disco, verificar se eh AVL ou nao em todos os nos e fazer a exclusao em disco
+
+//Funcao para verificar a altura dado uma arvore em disco, para motivos de revisao vou fazer a funcao usando arvore em memoria e depois arvore em disco
+
+int altura_recursiva_memoria(Tree *raiz)
+{
+    int esq, dir;
+
+    if(raiz)
+    {
+        esq = altura_recursiva_memoria(raiz->esq);
+        dir = altura_recursiva_memoria(raiz->dir);
+
+        if(esq > dir)
+            return 1 + esq;
+        else
+            return 1 + dir;
+    }
+    return 0;
+}
+
+typedef struct FilaDisco filaDisco;
+void initFD(filaDisco **f);
+void enqueueD(filaDisco **f, int info);
+void dequeueD(filaDisco **f, int *info);
+int isEmptyFD(filaDisco *f);
+
+int altura_disco(FILE *Ptrarq, int pos)
+{
+    //Aqui vou usar a ideia de guardar o NULL e acrescentar a altura
+    regarq dados;
+    int h = 0, valor;
+    filaDisco *f;
+    initFD(&f);
+    fseek(Ptrarq, pos*sizeof(regarq), 0);
+    fread(&dados, sizeof(regarq), 1, Ptrarq);
+    if(!feof(Ptrarq))
+    {
+        h=1;
+        if(dados.esq != 0)
+            enqueueD(&f, dados.esq);
+        if(dados.dir != 0)
+            enqueueD(&f, dados.dir);
+        if(!isEmptyFD(f))
+            enqueueD(&f, 0);
+
+        while(!isEmptyFD(f))
+        {
+            dequeueD(&f, &valor);
+            if(valor != 0)
+            {
+                fseek(Ptrarq, valor*sizeof(regarq), 0);
+                fread(&dados, sizeof(regarq), 1, Ptrarq);
+                if(dados.esq != 0)
+                    enqueueD(&f, dados.esq);
+                if(dados.dir != 0)
+                    enqueueD(&f, dados.dir);
+            }
+            else
+            {
+                h++;
+                if(!isEmptyFD(f))
+                    enqueueD(&f, 0);
+            }
+        }
+    }
+
+    return h;
+}
+
+char verifica_AVL_disco()
+{
+    filaDisco *f;
+    int AVL=1, FB, alt_esq, alt_dir, valor;
+    regarq dados;
+    initFD(&f);
+    FILE *Ptrarq = fopen("AVL.dat", "rb");
+    if(!Ptrarq)
+    {
+        printf("Erro ao abrir arquivo! \n");
+        AVL = 0;
+    }
+    else
+    {
+        enqueueD(&f, 0);
+        while(!isEmptyFD(f) && AVL)
+        {
+            dequeueD(&f, &valor);
+            fseek(Ptrarq, valor*sizeof(regarq), 0);
+            fread(&dados, sizeof(regarq), 1, Ptrarq);
+            if(!feof(Ptrarq))
+            {
+                alt_dir = alt_esq = 0;
+                if(dados.esq != 0)
+                    alt_esq = altura_disco(Ptrarq, dados.esq);
+                if(dados.dir != 0)
+                    alt_dir = altura_disco(Ptrarq, dados.dir);
+
+                FB = alt_dir - alt_esq;
+                if(FB < -1 || FB > 1)
+                    AVL = 0;
+                else
+                {
+                    if(dados.esq != 0)
+                        enqueueD(&f, dados.esq);
+                    if(dados.dir != 0)
+                        enqueueD(&f, dados.dir);
+                }
+            }
+        }
+
+        //Libera os nos da fila se encontrou um no desbalanceado antes do fim
+        while(!isEmptyFD(f))
+            dequeueD(&f, &valor);
+        fclose(Ptrarq);
+    }
+    return AVL;
+}
 
 
 
@@ -105,11 +218,6 @@ Faça algoritmos para a ABB em disco e também em vetor de registros:
 a) inserir na árvore ABB.
 
 */
-
-struct regArquivo
-{
-    int esq, info, dir;
-};typedef struct regArquivo regarq;
 
 int tamanho(FILE *Ptrarq)
 {
@@ -210,7 +318,7 @@ struct FilaDisco
 {
     int info;
     struct FilaDisco *prox;
-};typedef struct FilaDisco filaDisco;
+};
 
 void initFD(filaDisco **f)
 {
@@ -257,48 +365,6 @@ int isEmptyFD(filaDisco *f)
     return f == NULL;
 }
 
-int altura_disco(FILE *Ptrarq, int pos)
-{
-    //Aqui vou usar a ideia de guardar o NULL e acrescentar a altura
-    regarq dados;
-    int h = 0, valor;
-    filaDisco *f;
-    initFD(&f);
-    fseek(Ptrarq, pos*sizeof(regarq), 0);
-    fread(&dados, sizeof(regarq), 1, Ptrarq);
-    if(!feof(Ptrarq))
-    {
-        h=1;
-        if(dados.esq != 0)
-            enqueueD(&f, dados.esq);
-        if(dados.dir != 0)
-            enqueueD(&f, dados.dir);
-        if(!isEmptyFD(f))
-            enqueueD(&f, 0);
-
-        while(!isEmptyFD(f))
-        {
-            dequeueD(&f, &valor);
-            if(valor != 0)
-            {
-                fseek(Ptrarq, valor*sizeof(regarq), 0);
-                fread(&dados, sizeof(regarq), 1, Ptrarq);
-                if(dados.esq != 0)
-                    enqueueD(&f, dados.esq);
-                if(dados.dir != 0)
-                    enqueueD(&f, dados.dir);
-            }
-            else
-            {
-                h++;
-                if(!isEmptyFD(f))
-                    enqueueD(&f, 0);
-            }
-        }
-    }
-
-    return h;
-}
 
 void percorrer_ABB_disco()
 {
