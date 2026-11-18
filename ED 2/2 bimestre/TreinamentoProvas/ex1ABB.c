@@ -441,8 +441,187 @@ void ABB_emordem_disco()
     }
 }
 
+//O pos ordem segue a mesma logica do em ordem, a diferenca eh que precisa colocar invertido numa segunda pilha, percorrendo dessa vez da direita pra esquerda
+
+void ABB_posordem_disco()
+{
+    //Percorre a esquerda, visita o no e depois percorre a direita
+    pilhaDisco *p, *p2;
+    int tam, pos;
+    initPD(&p);
+    initPD(&p2);
+    FILE *Ptrarq = fopen("dados.dat", "rb");
+    regarq dados;
+    if(!Ptrarq)
+        printf("Erro ao abrir arquivo!\n");
+    else
+    {
+        tam = tamanho(Ptrarq);
+        fseek(Ptrarq, 0, 0);
+        if(tam == 0)
+            printf("Arquivo vazio!\n");
+        else
+        {
+            pos = 0;
+            while(pos != -1 || !isEmptyPD(p))
+            {
+                //Guarda a posicao do no atual e desce para a esquerda
+                while(pos != -1)
+                {
+                    pushD(&p, pos);
+                    pushD(&p2, pos);
+                    fseek(Ptrarq, pos*sizeof(regarq), 0);
+                    fread(&dados, sizeof(regarq), 1, Ptrarq);
+
+                    if(dados.dir != 0)
+                        pos = dados.dir;
+                    else
+                        pos = -1;
+                }
+
+                //Volta ao no que estava esperando na pilha
+                popD(&p, &pos);
+                fseek(Ptrarq, pos*sizeof(regarq), 0);
+                fread(&dados, sizeof(regarq), 1, Ptrarq);
+
+
+                if(dados.esq != 0)
+                    pos = dados.esq;
+                else
+                    pos = -1;
+            }
+            while(!isEmptyPD(p2))
+            {
+                popD(&p, &pos);
+                fseek(Ptrarq, pos*sizeof(regarq), 0);
+                fread(&dados, sizeof(regarq), 1, Ptrarq);
+                printf("%d ", dados.info);
+            }
+        }
+        fclose(Ptrarq);
+
+    }
+}
+
 /*
 d) fazer o algoritmo da exclusão da árvore ABB.
+*/
+void exclusao_ABB_disco(int info)
+{
+    regarq dados, pai, filho, sucessor, paiSucessor;
+    int pos = 0, terminar = 0;
+    int posPai = 0, posFilho;
+    int posSucessor, posPaiSucessor;
+    FILE *Ptrarq = fopen("dados.dat", "rb+");
+    if(!Ptrarq)
+        printf("Erro ao abrir arquivo!\n");
+    else
+    {
+        //A raiz fica na posicao 0, mas 0 nos campos esq e dir indica filho vazio
+
+        //Funcao para achar o no para a exclusao
+        fread(&dados, sizeof(regarq), 1, Ptrarq);
+        while(!feof(Ptrarq) && !terminar && dados.info != info)
+        {
+            //Guarda o pai antes de descer para poder atualizar o indice do filho
+            posPai = pos;
+            pai = dados;
+            if(info < dados.info)
+                pos = dados.esq;
+            else
+                pos = dados.dir;
+
+            if(pos == 0)
+                terminar = 1;
+            else
+            {
+                fseek(Ptrarq, pos*sizeof(regarq), 0);
+                fread(&dados, sizeof(regarq), 1, Ptrarq);
+            }
+        }
+
+        if(!feof(Ptrarq) && !terminar && dados.esq != 0 && dados.dir != 0)
+        {
+            //O sucessor eh o menor no da subarvore direita
+            posPaiSucessor = pos;
+            posSucessor = dados.dir;
+            fseek(Ptrarq, posSucessor*sizeof(regarq), 0);
+            fread(&sucessor, sizeof(regarq), 1, Ptrarq);
+            while(!feof(Ptrarq) && sucessor.esq != 0)
+            {
+                //Guarda o pai para atualizar a ligacao depois da descida
+                posPaiSucessor = posSucessor;
+                paiSucessor = sucessor;
+                posSucessor = sucessor.esq;
+                fseek(Ptrarq, posSucessor*sizeof(regarq), 0);
+                fread(&sucessor, sizeof(regarq), 1, Ptrarq);
+            }
+
+            if(!feof(Ptrarq))
+            {
+                dados.info = sucessor.info;
+
+                //O sucessor pode ter um filho a direita. Esse filho ocupa o lugar dele
+                if(posPaiSucessor == pos)
+                    dados.dir = sucessor.dir;
+                else
+                {
+                    paiSucessor.esq = sucessor.dir;
+                    fseek(Ptrarq, posPaiSucessor*sizeof(regarq), 0);
+                    fwrite(&paiSucessor, sizeof(regarq), 1, Ptrarq);
+                }
+
+                //O registro antigo do sucessor fica no arquivo, fora da arvore
+                fseek(Ptrarq, pos*sizeof(regarq), 0);
+                fwrite(&dados, sizeof(regarq), 1, Ptrarq);
+            }
+        }
+        else if(!feof(Ptrarq) && !terminar)
+        {
+            //Se o no for folha, posFilho fica 0 e a ligacao fica vazia
+            if(dados.esq != 0)
+                posFilho = dados.esq;
+            else
+                posFilho = dados.dir;
+
+            if(pos != 0)
+            {
+                //O pai passa a apontar para o filho do no excluido ou para 0
+                if(pai.esq == pos)
+                    pai.esq = posFilho;
+                else
+                    pai.dir = posFilho;
+
+                fseek(Ptrarq, posPai*sizeof(regarq), 0);
+                fwrite(&pai, sizeof(regarq), 1, Ptrarq);
+            }
+            else if(posFilho != 0)
+            {
+                //A raiz precisa ficar na posicao 0, entao copia o registro do filho inteiro
+                fseek(Ptrarq, posFilho*sizeof(regarq), 0);
+                fread(&filho, sizeof(regarq), 1, Ptrarq);
+                if(!feof(Ptrarq))
+                {
+                    fseek(Ptrarq, 0, 0);
+                    fwrite(&filho, sizeof(regarq), 1, Ptrarq);
+                }
+            }
+            else
+            {
+                //Sem raiz, a arvore fica vazia. O modo wb zera o arquivo
+                fclose(Ptrarq);
+                Ptrarq = fopen("dados.dat", "wb");
+                if(!Ptrarq)
+                    printf("Erro ao abrir arquivo!\n");
+            }
+        }
+        if(Ptrarq)
+            fclose(Ptrarq);
+    }
+}
+/*
+
+
 e) fazer o algoritmo de balanceamento da árvore ABB.
 f) excluir todos os nodos da árvore ABB.
 */
