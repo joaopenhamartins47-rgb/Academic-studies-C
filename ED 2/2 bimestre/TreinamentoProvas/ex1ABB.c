@@ -845,6 +845,13 @@ void balanceamento_perfeito_ABB(Tree **raiz) //sem ser disco
 f) excluir todos os nodos da árvore ABB.
 */
 
+void excluir_todos_ABB_disco()
+{
+    FILE *Ptrarq = fopen("dados.dat", "wb");
+    fclose(Ptrarq);
+}
+
+
 /*Ideias:
 
 
