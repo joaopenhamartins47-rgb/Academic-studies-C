@@ -165,14 +165,53 @@ void busca_hash(FILE *Ptrarq, int end, int cod, int *achou)
 
 //Nessa funcao as informacoes do registro ja vou ter por parametro, so vou precisar fazer essas verificacoes e atualizar o registro do pai
 
+void insereArqHash(tphash reg)
+{
+    tphash regdad;
 
+    int end, achou;
 
+    FILE *Ptrarq = fopen("arqHash.dat", "rb+");
+    if(!Ptrarq)
+        printf("Erro ao abrir arquivo!");
+    else
+    {
+        end = hash(reg.codigo);
 
+        //Vou ler o arq no endereco do hash para saber onde tenho que inserir
 
+        fseek(Ptrarq, end*sizeof(tphash), 0);
+        fread(&regdad, sizeof(tphash), 1, Ptrarq);
 
+        if(regdad.codigo == 0) //significa que ta vazio, entao insere
+        {
+            fseek(Ptrarq, end*sizeof(tphash), 0);
+            fwrite(&reg, sizeof(tphash), 1, Ptrarq);
+        }
+        else //colisao, caso tenha elo
+        {
+            busca_hash(Ptrarq, end, reg.codigo, &achou);
+            if(!achou) //insere
+            {
+                reg.elo = regdad.elo; //Pega o ultimo elo antes de inserir e coloca no reg atual
+                
+                //insere no final e depois atualiza o pai
+                fseek(Ptrarq, 0, 2);
 
+                regdad.elo = ftell(Ptrarq)/sizeof(tphash) -1;
 
+                fwrite(&reg, sizeof(tphash), 1, Ptrarq);
 
+                //insere o pai
+                fseek(Ptrarq, end*sizeof(tphash), 0);
+                fwrite(&regdad, sizeof(tphash), 1, Ptrarq);
+            }
+            else
+                printf("Chave ja existente!");
+        }
+        fclose(Ptrarq);
+    }
+}
 
 
 int main(void)
