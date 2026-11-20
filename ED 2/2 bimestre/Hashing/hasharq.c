@@ -87,7 +87,7 @@ Caixa* busca_indexada(Caixa *inicio, int cod)
     return inicio;
 }
 
-//Funcao para inserir a caixa utilizando hashing no arquivo\
+//Funcao para inserir a caixa utilizando hashing no arquivo
 
 void insere_hash(tpreg reg, Caixa *T[N])
 {
@@ -104,6 +104,72 @@ void insere_hash(tpreg reg, Caixa *T[N])
     }
     fclose(Ptrarq);
 }
+
+//-------------------------------------------------------------------------------------------------------
+//Insere hash utilizando o elo, que eh o registro pai que deve apontar para a area de extensao (overflow)
+
+//Vou precisar de uma funcao que inicializa todos os registros no arq de tamanho n com codigo zero
+
+struct Tphash
+{
+    int codigo, status, elo;
+    char nome[50];
+};typedef struct Tphash tphash;
+
+void init_arq()
+{
+    FILE *Ptrarq = fopen("arqHash.dat", "wb");
+
+    tphash reg;
+    reg.codigo = 0;
+    strcpy(reg.nome, "");
+    reg.status = 0;
+    reg.elo = 0;
+    int i;
+    for(i = 0; i<N; i++)
+    {
+        fwrite(&reg, sizeof(tphash), 1, Ptrarq);
+    }
+    fclose(Ptrarq);
+}
+
+//Tambem vou precisar de uma funcao busca_hash, que precura na posicao do arq se tem aquele codigo, atraves dos elos enquanto for diferente de 0
+
+void busca_hash(FILE *Ptrarq, int end, int cod, int *achou)
+{
+    int terminou = 0;
+    *achou = 0;
+    tphash reg;
+    fseek(Ptrarq, end*sizeof(tphash), 0);
+    fread(&reg, sizeof(tphash), 1, Ptrarq);
+    while(!feof(Ptrarq) && !terminou)
+    {
+        if(reg.codigo != cod)
+        {
+            if(reg.elo == 0)
+                terminou = 1;
+            else
+            {
+                fseek(Ptrarq, reg.elo*sizeof(tphash), 0);
+                fread(&reg, sizeof(tphash), 1, Ptrarq);
+            }
+        }
+        else
+        {
+            terminou = 1;
+            *achou = 1;
+        }
+    }
+}
+
+
+//Nessa funcao as informacoes do registro ja vou ter por parametro, so vou precisar fazer essas verificacoes e atualizar o registro do pai
+
+
+
+
+
+
 
 
 
