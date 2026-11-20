@@ -22,6 +22,22 @@ KdTree *CriaNo(int ponto[K])
 	return no;
 }
 
+void insereR(KdTree **raiz, int ponto[K], int n)
+{
+	int d;
+	if (*raiz==NULL)
+		*raiz=Cria_no(ponto);
+	else
+	{
+		d=n%K;
+		if (ponto[d] < (*raiz)->ponto[d])
+			insereR(&(*raiz)->esq, ponto, n+1);
+		else
+			insereR(&(*raiz)->dir, ponto, n+1);
+	}
+}
+
+
 void ordenaPontos(int pontos[TF][K],int ini,int fim,int d)
 {
 	int i,j,aux;
@@ -77,6 +93,51 @@ void buscaPonto(KdTree *raiz,int pbusca[K],int raio)
 		buscaPonto(raiz->dir,pbusca,raio);	
 	}
 }
+
+
+
+//Exercicios para treinar kdtree e fixar sua regra de execucao
+
+/*
+A função deve retornar 1 se o ponto existir e 0 caso contrário.
+- Considere o ponto encontrado somente quando todas as coordenadas forem iguais.
+- Escolha o próximo filho pela dimensão do nível atual.
+- Faça sem recursão.
+*/
+int buscaExata(KdTree *raiz, int ponto[K])
+{
+	int d, n = 0, i, achou=0, cont=0;
+	while(raiz && !achou)
+	{
+		d = n%K;
+		if(ponto[d] != raiz->ponto[d])
+		{
+			if(ponto[d] < raiz->ponto[d])
+				raiz = raiz->esq;
+			else if(ponto[d] > raiz->ponto[d])
+				raiz = raiz->dir;
+		}
+		else
+		{
+			cont = 0;
+			for(i = 0; i<K; i++)
+			{
+				if(ponto[i] == raiz->ponto[i])
+					cont++;
+			}
+			if(cont == K)
+				achou = 1;
+			else
+				raiz = raiz->dir;
+			
+		}
+		n+=1;
+		
+	}
+	return achou;
+}
+
+
 
 int main()
 {
