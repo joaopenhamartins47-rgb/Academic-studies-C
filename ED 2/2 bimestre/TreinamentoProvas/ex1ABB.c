@@ -922,15 +922,17 @@ void balanceamento_perfeito_ABB(Tree **raiz) //sem ser disco
             {
                 aux = no->info;
 
-                //Avanca
 
+
+                //Faz a busca, exclui e insere
+                busca_exclusao(no, aux, &ex, &pai);
+
+
+                //Avanca pq vou excluir o no atual ou substituir ele
                 if(!no->esq)
                     no = no->dir;
                 else if(!no->dir)
                     no = no->esq;
-
-                //Faz a busca, exclui e insere
-                busca_exclusao(no, aux, &ex, &pai);
 
                 if(FB < 0) //Exclui do lado esquerdo
                     excluir_no_arvore(&*raiz, pai, ex, 'e', aux);
