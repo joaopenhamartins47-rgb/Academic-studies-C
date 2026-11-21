@@ -137,6 +137,35 @@ int buscaExata(KdTree *raiz, int ponto[K])
 	return achou;
 }
 
+/*
+6. Consulta por região retangular
+
+Exiba os pontos cujas coordenadas estejam dentro dos limites, incluindo as bordas.
+*/
+
+void buscaRetangulo(KdTree *raiz, int minimo[K], int maximo[K], int n)
+{
+	//Utilizar a regra do calculo d para verificar se esta dentro do limite
+	int i, cont=0, igual=0;
+	if(raiz)
+	{
+		for(i = 0; i<K && !igual; i++)
+		{
+			if(raiz->ponto[i] >= minimo[i] && raiz->ponto[i] <= maximo[i])
+				cont++;
+		}
+		if(cont == K)
+		{
+			for(i=0; i<K;i++)
+				printf("%d ", raiz->ponto[i]);
+				
+			printf("\n");
+		}
+		buscaRetangulo(raiz->esq, minimo, maximo, n+1);
+		buscaRetangulo(raiz->dir, minimo, maximo, n+1);
+	}
+}
+
 
 
 int main()
