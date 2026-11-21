@@ -26,7 +26,7 @@ void insereR(KdTree **raiz, int ponto[K], int n)
 {
 	int d;
 	if (*raiz==NULL)
-		*raiz=Cria_no(ponto);
+		*raiz=CriaNo(ponto);
 	else
 	{
 		d=n%K;
@@ -174,8 +174,11 @@ int main()
 	KdTree *raiz=NULL;
 	int i;
 	int pbusca[K] = {32,42};
+	int minimo[K] = {10, 10};
+	int maximo[K] = {50, 50};
 	
 	insereBalanceado(&raiz,pontos,0,TF-1,0);
+	buscaRetangulo(raiz, minimo, maximo, 0);
 	
 	buscaPonto(raiz,pbusca,22);
 	
